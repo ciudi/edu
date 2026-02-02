@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quiz</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; max-width: 900px; margin: 24px auto; padding: 0 16px; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .badge { display:inline-block; padding:6px 10px; border:1px solid #ddd; border-radius:999px; font-size:14px; }
+    .card { border:1px solid #e5e5e5; border-radius:14px; padding:16px; margin:14px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+    h1 { margin: 0 0 10px; font-size: 22px; }
+    h2 { margin: 0 0 10px; font-size: 18px; }
+    .choices { margin: 10px 0; }
+    .choice { display:flex; gap:10px; padding:10px; border:1px solid #eee; border-radius:12px; margin:8px 0; cursor:pointer; }
+    .choice:hover { background: #fafafa; }
+    .choice input { margin-top: 3px; }
+    button { padding:10px 14px; border-radius:12px; border:1px solid #ddd; background:white; cursor:pointer; font-weight:600; }
+    button:hover { background:#f6f6f6; }
+    button.primary { background:#111; color:#fff; border-color:#111; }
+    button.primary:hover { background:#222; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; }
+    .muted { opacity:.75; }
+    .result { padding: 12px; border-radius: 12px; border: 1px solid #e9e9e9; background: #fbfbfb; margin-top: 12px; }
+    .ok { border-color: #cfead6; background: #f3fbf5; }
+    .bad { border-color: #ffd0d0; background: #fff5f5; }
+    .timer { font-variant-numeric: tabular-nums; }
+    .progress { height: 10px; background: #eee; border-radius: 999px; overflow:hidden; margin-top: 10px; }
+    .progress > div { height:100%; width:0%; background:#111; transition: width .2s linear; }
+    .footer { margin-top: 18px; display:flex; justify-content:space-between; gap: 12px; flex-wrap:wrap; }
+    .small { font-size: 13px; }
+    code { background:#f6f6f6; padding:2px 6px; border-radius:8px; }
+  </style>
+</head>
+<body>
+
+<h1>Quiz</h1>
+
+<div class="topbar">
+  <div class="badge" id="qCounter">Întrebarea 1 / 1</div>
+  <div class="badge timer">⏳ Timp rămas: <span id="timeLeft">30</span>s</div>
+</div>
+<div class="progress"><div id="timeBar"></div></div>
+
+<div id="app" class="card"></div>
+
+<script>
+  // === 1) Pune aici JSON-ul tău ===
+  const questions = [
+    {
+      "question": "Ce sentimente predominante transmite eul liric în poezia „Fiind băiet păduri cutreieram”?",
+      "choices": ["Frică și nesiguranță", "Melancolie și visare", "Indiferență și plictiseală", "Revoltă și ură"],
+      "answerIndex": 1,
+      "explanation": "Conform analizei, eul liric își petrece nopțile în pădure, creând o atmosferă de visare profundă și melancolie [1]."
+    },
+    {
+      "question": "În enunțul „Tricoul fetei este nou”, substantivul „fetei” este în cazul:",
+      "choices": ["Nominativ", "Acuzativ", "Genitiv", "Dativ"],
+      "answerIndex": 2,
+      "explanation": "Substantivul „fetei” răspunde la întrebarea „al cui?” (al tricoului) și indică posesia, fiind în cazul Genitiv [2], [3]."
+    },
+    {
+      "question": "Alege forma corectă a verbului în enunțul: „Cizmarul nu ... să stea cu noi la masă.”",
+      "choices": ["vroia", "voia", "vrea", "vruse"],
+      "answerIndex": 1,
+      "explanation": "Forma „vroia” este considerată greșită (o contaminare între „a vrea” și „a voi”). Corect este „voia” [4]."
+    },
+    {
+      "question": "Ce fel de propoziție subordonată este secvența subliniată în fraza: „Timpul este focul în care ne ardem existența.”?",
+      "choices": ["Completivă directă", "Subiectivă", "Atributivă", "Circumstanțială de loc"],
+      "answerIndex": 2,
+      "explanation": "Propoziția „în care ne ardem existența” determină substantivul „focul”, deci este o subordonată atributivă [5]."
+    },
+    {
+      "question": "Care este valoarea morală asociată cu „Povestea lui Harap-Alb” în materialele studiate?",
+      "choices": ["Curajul și asumarea responsabilităților", "Iubirea de natură", "Pasiunea pentru cărți", "Dorința de libertate"],
+      "answerIndex": 0,
+      "explanation": "Tabelul de valori asociază „Povestea lui Harap-Alb” cu curajul și asumarea responsabilităților [6]."
+    },
+    {
+      "question": "În enunțul „I-am mulțumit fetei pentru ajutor”, substantivul „fetei” este în cazul:",
+      "choices": ["Genitiv", "Dativ", "Acuzativ", "Nominativ"],
+      "answerIndex": 1,
+      "explanation": "Răspunde la întrebarea „cui i-am mulțumit?”, ceea ce indică destinatarul acțiunii, specific cazului Dativ [3]."
+    },
+    {
+      "question": "Realizând expansiunea atributului din enunțul „Tema scrisă în pauză a fost corectă”, obținem:",
+      "choices": ["Tema pe care am scris-o în pauză...", "Tema care a fost scrisă în pauză...", "Tema ce se scrie în pauză...", "Tema de scris în pauză..."],
+      "answerIndex": 1,
+      "explanation": "Atributul adjectival „scrisă” se transformă într-o propoziție atributivă introdusă prin „care” + verbul la pasiv: „care a fost scrisă” [7]."
+    },
+    {
+      "question": "Identifică figura de stil din versul: „Și un miros venea adormitor” (Mihai Eminescu).",
+      "choices": ["Personificare", "Oximoron", "Epitet", "Hiperbolă"],
+      "answerIndex": 2,
+      "explanation": "Cuvântul „adormitor” determină substantivul „miros”, atribuindu-i o însușire deosebită, fiind un epitet [8]."
+    },
+    {
+      "question": "Alege varianta corectă:",
+      "choices": ["Dragele mele prietene", "Dragile mele prietene", "Dragiile mele prietene", "Dragăle mele prietene"],
+      "answerIndex": 0,
+      "explanation": "Forma corectă articulată a adjectivului „drag” la feminin plural este „dragele” (dragă -> drage -> dragele) [4]."
+    },
+    {
+      "question": "În fabula „Vulpea în livadă”, figura de stil predominantă este:",
+      "choices": ["Metafora", "Personificarea", "Antiteza", "Comparația"],
+      "answerIndex": 1,
+      "explanation": "Vulpea este un personaj reprezentativ prin care sunt redate trăsături umane (ipocrizia), figura de stil fiind personificarea [9]."
+    },
+    {
+      "question": "Ce funcție sintactică are cuvântul subliniat în propoziția: „Ana, fii mai calmă!”?",
+      "choices": ["Predicat verbal", "Predicat nominal", "Subiect", "Complement direct"],
+      "answerIndex": 1,
+      "explanation": "Verbul „a fi” este copulativ (la imperativ), formând împreună cu numele predicativ „mai calmă” un predicat nominal [10]."
+    },
+    {
+      "question": "Sinonimul contextual pentru cuvântul „distinsă” în expresia „o prezență distinsă” este:",
+      "choices": ["frumoasă", "remarcabilă", "destinsă", "clară"],
+      "answerIndex": 1,
+      "explanation": "În context, „distinsă” înseamnă o prezență care iese în evidență, deci „remarcabilă” [11]."
+    },
+    {
+      "question": "În enunțul „Am observat că ai lipsit de la oră”, propoziția subordonată este:",
+      "choices": ["Atributivă", "Completivă directă", "Subiectivă", "Completivă indirectă"],
+      "answerIndex": 1,
+      "explanation": "Propoziția răspunde la întrebarea „ce am observat?” pusă verbului regent, fiind o Completivă Directă [5]."
+    },
+    {
+      "question": "Tema poeziei „În parc” de Ion Pillat este:",
+      "choices": ["Iubirea imposibilă", "Trecerea ireversibilă a timpului", "Războiul", "Copilăria fericită"],
+      "answerIndex": 1,
+      "explanation": "Indici precum „târziu”, „de-altădată” și „trecutul” sugerează tema trecerii timpului și a memoriei afective [12]."
+    },
+    {
+      "question": "Alege varianta corectă:",
+      "choices": ["Nu se merită să mergi acolo.", "Nu merită să mergi acolo.", "Nu se merită a merge acolo.", "Nu merita-se să mergi acolo."],
+      "answerIndex": 1,
+      "explanation": "Verbul „a merita” nu este reflexiv, deci forma corectă este „nu merită” [4]."
+    },
+    {
+      "question": "În propoziția „Doar al patrulea m-a salutat”, subiectul este exprimat prin:",
+      "choices": ["Numeral cardinal", "Numeral ordinal", "Substantiv", "Pronume"],
+      "answerIndex": 1,
+      "explanation": "„Al patrulea” este un numeral ordinal cu valoare substantivală care îndeplinește funcția de subiect [10]."
+    },
+    {
+      "question": "Contragerea subordonatei din fraza „Cartea pe care a cumpărat-o Iulian este în bancă” este:",
+      "choices": ["Cartea cumpărată de Iulian...", "Cartea de cumpărat...", "Cartea cumpărând...", "Cartea lui Iulian..."],
+      "answerIndex": 0,
+      "explanation": "Propoziția atributivă „pe care a cumpărat-o” se reduce la atributul adjectival (participial) „cumpărată” [7]."
+    },
+    {
+      "question": "Ce mărci lexico-gramaticale arată implicarea afectivă în „Fiind băiet păduri cutreieram”?",
+      "choices": ["Verbe la persoana a III-a", "Verbe și pronume la persoana I", "Substantive la plural", "Adjective cromatice"],
+      "answerIndex": 1,
+      "explanation": "Mărcile persoanei I („cutreieram”, „mă”, „mi”, „aud”) subliniază subiectivitatea și trăirea directă a eului liric [13]."
+    },
+    {
+      "question": "Alege varianta corectă pentru numeralul 12 la feminin:",
+      "choices": ["Doișpe colege", "Doisprezece colege", "Douăsprezece colege", "Douăspe colege"],
+      "answerIndex": 2,
+      "explanation": "La genul feminin, numeralul cardinal 12 are forma „douăsprezece” (pentru că are la bază „două”, nu „doi”) [4]."
+    },
+    {
+      "question": "În propoziția „Prietenii lui Harap-Alb au dovedit bunătate”, cazul substantivului „Harap-Alb” este:",
+      "choices": ["Nominativ", "Acuzativ", "Dativ", "Genitiv"],
+      "answerIndex": 3,
+      "explanation": "Structura „Prietenii lui Harap-Alb” indică posesia (ai cui prieteni?), iar „lui” este marca specifică Genitivului la nume proprii masculine [3]."
+    },
+    {
+      "question": "Care este forma corectă de imperativ negativ a verbului „a fi”?",
+      "choices": ["Nu fii supărat!", "Nu fi supărat!", "Nu fiți supărat!", "Nu fii!"],
+      "answerIndex": 1,
+      "explanation": "La imperativ negativ, verbul „a fi” se scrie cu un singur „i” (Nu fi!), spre deosebire de afirmativ (Fii!) [4]."
+    },
+    {
+      "question": "În secvența „Ocoli o întreagă livadă ca să arate că nu contează doar jumătate...”, cuvintele subliniate sunt:",
+      "choices": ["Sinonime", "Antonime", "Omonime", "Paronime"],
+      "answerIndex": 1,
+      "explanation": "„Întreagă” și „jumătate” se află într-o relație de opoziție (totul vs. parte), fiind antonime [11]."
+    },
+    {
+      "question": "Verbul din propoziția „A citi înseamnă a cunoaște” se află la modul:",
+      "choices": ["Indicativ", "Conjunctiv", "Infinitiv", "Gerunziu"],
+      "answerIndex": 2,
+      "explanation": "Forma „a citi” (prepoziția 'a' + verb) este specifică modului Infinitiv [14]."
+    },
+    {
+      "question": "Cuvântul „fata” în structura „Fata aceea” este determinat de:",
+      "choices": ["Un adjectiv posesiv", "Un adjectiv demonstrativ", "Un pronume personal", "Un numeral"],
+      "answerIndex": 1,
+      "explanation": "„Aceea” este un adjectiv pronominal demonstrativ de depărtare care se acordă cu substantivul „fata” [4]."
+    },
+    {
+      "question": "Care este rolul cratimei în structura „gura-abia închisă” din poezia eminesciană?",
+      "choices": ["Marchează o pauză în vorbire", "Leagă două substantive", "Marchează rostirea într-o singură silabă a două cuvinte diferite", "Este o greșeală de tipar"],
+      "answerIndex": 2,
+      "explanation": "În poezie, cratima este folosită frecvent pentru a păstra măsura versurilor prin elidarea unei vocale sau rostirea legată (sinalefă) [15]."
+    }
+  ];
+
+  // === 2) Logică quiz ===
+  const app = document.getElementById("app");
+  const qCounter = document.getElementById("qCounter");
+  const timeLeftEl = document.getElementById("timeLeft");
+  const timeBar = document.getElementById("timeBar");
+
+  const TIME_PER_Q = 30;
+
+  let idx = 0;
+  let score = 0;
+  let timer = null;
+  let remaining = TIME_PER_Q;
+  let locked = false;
+
+  function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+
+  function grade1to10(correct, total) {
+    if (total <= 0) return 1;
+    const ratio = correct / total;
+    // Notă proporțională: 0% -> 1, 100% -> 10
+    const g = 1 + ratio * 9;
+    // rotunjire la 2 zecimale (poți schimba)
+    return Math.round(g * 100) / 100;
+  }
+
+  function stopTimer(){
+    if (timer) { clearInterval(timer); timer = null; }
+  }
+
+  function startTimer(){
+    stopTimer();
+    remaining = TIME_PER_Q;
+    timeLeftEl.textContent = remaining;
+    timeBar.style.width = "100%";
+
+    timer = setInterval(() => {
+      remaining -= 1;
+      timeLeftEl.textContent = remaining;
+
+      const pct = (remaining / TIME_PER_Q) * 100;
+      timeBar.style.width = clamp(pct, 0, 100) + "%";
+
+      if (remaining <= 0) {
+        stopTimer();
+        // time's up -> show correct + explanation, mark wrong
+        revealAnswer(null, true);
+      }
+    }, 1000);
+  }
+
+  function renderQuestion(){
+    locked = false;
+    const q = questions[idx];
+    qCounter.textContent = `Întrebarea ${idx + 1} / ${questions.length}`;
+
+    app.innerHTML = `
+      <h2>${q.question}</h2>
+      <div class="choices">
+        ${q.choices.map((c, i) => `
+          <label class="choice">
+            <input type="radio" name="choice" value="${i}">
+            <span>${c}</span>
+          </label>
+        `).join("")}
+      </div>
+      <div class="row">
+        <button class="primary" id="submitBtn">Trimite răspuns</button>
+        <button id="skipBtn">Nu știu / sari</button>
+      </div>
+      <div id="feedback"></div>
+      <div class="footer small muted">
+        <div>Scor curent: <b id="scoreNow">${score}</b> / ${questions.length}</div>
+        <div>Timp / întrebare: <code>${TIME_PER_Q}s</code></div>
+      </div>
+    `;
+
+    document.getElementById("submitBtn").onclick = () => {
+      if (locked) return;
+      const picked = app.querySelector('input[name="choice"]:checked');
+      if (!picked) {
+        const fb = document.getElementById("feedback");
+        fb.innerHTML = `<div class="result">Alege un răspuns înainte să trimiți.</div>`;
+        return;
+      }
+      revealAnswer(Number(picked.value), false);
+    };
+
+    document.getElementById("skipBtn").onclick = () => {
+      if (locked) return;
+      revealAnswer(null, false);
+    };
+
+    startTimer();
+  }
+
+  function revealAnswer(selectedIndex, timedOut){
+    locked = true;
+    stopTimer();
+
+    const q = questions[idx];
+    const correct = q.answerIndex;
+    const isCorrect = (selectedIndex === correct);
+
+    if (isCorrect) score += 1;
+
+    const fb = document.getElementById("feedback");
+    const pickedText = (selectedIndex === null)
+      ? (timedOut ? "⏰ Timpul a expirat." : "Ai sărit întrebarea.")
+      : `Ai ales: <b>${q.choices[selectedIndex]}</b>`;
+
+    const status = isCorrect ? "✅ Corect" : "❌ Greșit";
+    const boxClass = isCorrect ? "result ok" : "result bad";
+
+    fb.innerHTML = `
+      <div class="${boxClass}">
+        <div style="font-size:16px; margin-bottom:6px;"><b>${status}</b></div>
+        <div>${pickedText}</div>
+        <div style="margin-top:8px;">
+          Răspuns corect: <b>${q.choices[correct]}</b>
+        </div>
+        <div style="margin-top:8px; opacity:.9">
+          Explicație: ${q.explanation ?? "(fără explicație)"}
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px;">
+        <button class="primary" id="nextBtn">${idx < questions.length - 1 ? "Următoarea întrebare" : "Vezi rezultatul final"}</button>
+      </div>
+    `;
+
+    document.getElementById("scoreNow").textContent = score;
+
+    document.getElementById("nextBtn").onclick = () => {
+      idx += 1;
+      if (idx < questions.length) {
+        renderQuestion();
+      } else {
+        renderFinal();
+      }
+    };
+  }
+
+  function renderFinal(){
+    stopTimer();
+    // ascunde timer bar (opțional)
+    timeLeftEl.textContent = "0";
+    timeBar.style.width = "0%";
+    qCounter.textContent = "Final";
+
+    const total = questions.length;
+    const nota = grade1to10(score, total);
+
+    app.innerHTML = `
+      <h2>Rezultat final</h2>
+      <div class="result ok">
+        <div>Răspunsuri corecte: <b>${score}</b> / <b>${total}</b></div>
+        <div style="margin-top:8px;">Notă: <b>${nota}</b> / 10</div>
+      </div>
+      <div class="row" style="margin-top:12px;">
+        <button class="primary" id="restartBtn">Reîncepe quiz-ul</button>
+      </div>
+      <p class="small muted" style="margin-top:10px;">
+        Notarea este proporțională: 0% = 1, 100% = 10.
+      </p>
+    `;
+
+    document.getElementById("restartBtn").onclick = () => {
+      idx = 0;
+      score = 0;
+      renderQuestion();
+    };
+  }
+
+  // start
+  renderQuestion();
+</script>
+
+</body>
+</html>
