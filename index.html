@@ -91,7 +91,7 @@
       "explanation": "Imperativul afirmativ al verbului „a fi” se scrie obligatoriu cu doi 'i'."
     },
     {
-      "question": "În versurile din „Dimineața” de Vasile Alecsandri (Link text: https://ro.wikisource.org/wiki/Diminea%C8%9Ba_(Alecsandri)): „Raze vii sărută june flori de primăvară”, verbul **sărută** construiește o:",
+      "question": "În versurile din „Dimineața” de Vasile Alecsandri (Link text: https://ro.wikisource.org/wiki/Diminea%C8%9Ba_(Alecsandri) ): „Raze vii sărută june flori de primăvară”, verbul **sărută** construiește o:",
       "choices": ["Comparație", "Personificare", "Enumerație", "Repetiție"],
       "answerIndex": 1,
       "explanation": "Razele soarelui primesc o însușire umană (acțiunea de a săruta), realizând o personificare."
@@ -109,7 +109,7 @@
       "explanation": "Cuvântul răspunde la întrebarea „cui (i-am mulțumit)?”, specifică Dativului."
     },
     {
-      "question": "În textul „România Pitorească” (Link text: https://ro.wikisource.org/wiki/Rom%C3%A2nia_Pitoreasc%C4%83), Vlahuță descrie Dunărea folosind sintagma „**clocot** de valuri”, care sugerează:",
+      "question": "În textul „România Pitorească” ( Link text: https://ro.wikisource.org/wiki/Rom%C3%A2nia_Pitoreasc%C4%83 ), Vlahuță descrie Dunărea folosind sintagma „**clocot** de valuri”, care sugerează:",
       "choices": ["Liniștea apei", "Dinamismul și forța apei", "Culoarea apei", "Adâncimea apei"],
       "answerIndex": 1,
       "explanation": "Termenul „clocot” este o metaforă care sugerează mișcarea violentă, agitată și zgomotoasă a apei."
@@ -280,7 +280,7 @@
       return `(${left}<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a> ${right})`;
     });
 
-    // 3) "Link text: URL" -> clicabil (și păstrează ",)" etc.)
+    // 3) ": URL" -> clicabil (și păstrează ",)" etc.)
     //    + spațiu între finalul link-ului și paranteză: ...</a> )
     text = text.replace(/Link text:\s*(https?:\/\/\S+)/g, (m, url) => {
       return `Link text: <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
