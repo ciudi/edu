@@ -6,7 +6,7 @@
   <title>Quiz</title>
   <style>
     body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; max-width: 900px; margin: 24px auto; padding: 0 16px; }
-    .topbar { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
     .badge { display:inline-block; padding:6px 10px; border:1px solid #ddd; border-radius:999px; font-size:14px; }
     .card { border:1px solid #e5e5e5; border-radius:14px; padding:16px; margin:14px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
     h1 { margin: 0 0 10px; font-size: 22px; }
@@ -30,6 +30,7 @@
     .footer { margin-top: 18px; display:flex; justify-content:space-between; gap: 12px; flex-wrap:wrap; }
     .small { font-size: 13px; }
     code { background:#f6f6f6; padding:2px 6px; border-radius:8px; }
+    a { color: inherit; }
   </style>
 </head>
 <body>
@@ -45,161 +46,161 @@
 <div id="app" class="card"></div>
 
 <script>
-  // === 1) Pune aici JSON-ul tău ===
+  // === JSON-ul tău ===
   const questions = [
     {
-      "question": "Ce sentimente predominante transmite eul liric în poezia „Fiind băiet păduri cutreieram”?",
-      "choices": ["Frică și nesiguranță", "Melancolie și visare", "Indiferență și plictiseală", "Revoltă și ură"],
+      "question": "În basmul cult „Povestea lui Harap-Alb” (Link text: https://ro.wikisource.org/wiki/Povestea_lui_Harap-Alb), valoarea morală principală pe care o dobândește protagonistul este:",
+      "choices": ["Vicleșugul", "Curajul și asumarea responsabilității", "Lăcomia", "Indiferența"],
       "answerIndex": 1,
-      "explanation": "Conform analizei, eul liric își petrece nopțile în pădure, creând o atmosferă de visare profundă și melancolie [1]."
+      "explanation": "Călătoria lui Harap-Alb este un drum de inițiere în care acesta învață să își asume responsabilități și să dea dovadă de curaj și onestitate."
     },
     {
-      "question": "În enunțul „Tricoul fetei este nou”, substantivul „fetei” este în cazul:",
-      "choices": ["Nominativ", "Acuzativ", "Genitiv", "Dativ"],
-      "answerIndex": 2,
-      "explanation": "Substantivul „fetei” răspunde la întrebarea „al cui?” (al tricoului) și indică posesia, fiind în cazul Genitiv [2], [3]."
-    },
-    {
-      "question": "Alege forma corectă a verbului în enunțul: „Cizmarul nu ... să stea cu noi la masă.”",
-      "choices": ["vroia", "voia", "vrea", "vruse"],
+      "question": "Identifică funcția sintactică a cuvântului evidențiat: „Eforturile lor erau **crescânde**.”",
+      "choices": ["Verb la gerunziu", "Adjectiv provenit din gerunziu", "Adverb de mod", "Substantiv"],
       "answerIndex": 1,
-      "explanation": "Forma „vroia” este considerată greșită (o contaminare între „a vrea” și „a voi”). Corect este „voia” [4]."
+      "explanation": "Deși are formă de gerunziu, cuvântul se acordă cu substantivul „eforturile”, devenind adjectiv."
     },
     {
-      "question": "Ce fel de propoziție subordonată este secvența subliniată în fraza: „Timpul este focul în care ne ardem existența.”?",
-      "choices": ["Completivă directă", "Subiectivă", "Atributivă", "Circumstanțială de loc"],
-      "answerIndex": 2,
-      "explanation": "Propoziția „în care ne ardem existența” determină substantivul „focul”, deci este o subordonată atributivă [5]."
+      "question": "Alege forma corectă a verbului **a crea** pentru persoana I, plural, indicativ prezent: „Noi ... un site nou.”",
+      "choices": ["creem", "creăm", "crim", "creiem"],
+      "answerIndex": 1,
+      "explanation": "Verbul „a crea” se conjugă după modelul „a lucra” (lucrăm -> creăm)."
     },
     {
-      "question": "Care este valoarea morală asociată cu „Povestea lui Harap-Alb” în materialele studiate?",
-      "choices": ["Curajul și asumarea responsabilităților", "Iubirea de natură", "Pasiunea pentru cărți", "Dorința de libertate"],
-      "answerIndex": 0,
-      "explanation": "Tabelul de valori asociază „Povestea lui Harap-Alb” cu curajul și asumarea responsabilităților [6]."
+      "question": "În poezia „Fiind băiet păduri cutreieram” (Link text: https://ro.wikisource.org/wiki/Fiind_b%C4%83iet_p%C4%83duri_cutreieram), versul „Un **freamăt** lin trecea din ram în ram” conține o imagine:",
+      "choices": ["Vizuală", "Auditivă", "Olfactivă", "Gustativă"],
+      "answerIndex": 1,
+      "explanation": "Cuvântul „freamăt” sugerează sunetul produs de vânt sau de frunze, fiind o imagine auditivă."
     },
     {
-      "question": "În enunțul „I-am mulțumit fetei pentru ajutor”, substantivul „fetei” este în cazul:",
+      "question": "În propoziția „Timpul este focul **în care ne ardem existența**”, secvența evidențiată este o propoziție subordonată:",
+      "choices": ["Completivă directă", "Atributivă", "Predicativă", "Circumstanțială de timp"],
+      "answerIndex": 1,
+      "explanation": "Propoziția determină substantivul „focul” (care foc?), îndeplinind funcția de atribut."
+    },
+    {
+      "question": "În fabula „Vulpea în livadă” (Link text: https://ro.wikisource.org/wiki/Vulpea_%C3%AEn_livad%C4%83), figura de stil prin care sunt atribuite vulpii trăsături umane (ipocrizia) este:",
+      "choices": ["Metafora", "Personificarea", "Epitetul", "Hiperbola"],
+      "answerIndex": 1,
+      "explanation": "Personificarea este procedeul prin care animalele primesc însușiri umane, specific fabulei."
+    },
+    {
+      "question": "Alege varianta corectă: „**Fii** / **Fi** mai atent la ore!”",
+      "choices": ["Fi", "Fii"],
+      "answerIndex": 1,
+      "explanation": "Imperativul afirmativ al verbului „a fi” se scrie obligatoriu cu doi 'i'."
+    },
+    {
+      "question": "În versurile din „Dimineața” de Vasile Alecsandri (Link text: https://ro.wikisource.org/wiki/Diminea%C8%9Ba_(Alecsandri)): „Raze vii sărută june flori de primăvară”, verbul **sărută** construiește o:",
+      "choices": ["Comparație", "Personificare", "Enumerație", "Repetiție"],
+      "answerIndex": 1,
+      "explanation": "Razele soarelui primesc o însușire umană (acțiunea de a săruta), realizând o personificare."
+    },
+    {
+      "question": "În enunțul „Eu **mă** apăr.”, pronumele evidențiat este:",
+      "choices": ["Personal", "Reflexiv", "Posesiv", "Demonstrativ"],
+      "answerIndex": 1,
+      "explanation": "Subiectul (Eu) face acțiunea care se răsfrânge asupra sa; persoana pronumelui coincide cu a verbului."
+    },
+    {
+      "question": "Precizează cazul cuvântului evidențiat: „I-am mulțumit **colegului** pentru ajutor.”",
       "choices": ["Genitiv", "Dativ", "Acuzativ", "Nominativ"],
       "answerIndex": 1,
-      "explanation": "Răspunde la întrebarea „cui i-am mulțumit?”, ceea ce indică destinatarul acțiunii, specific cazului Dativ [3]."
+      "explanation": "Cuvântul răspunde la întrebarea „cui (i-am mulțumit)?”, specifică Dativului."
     },
     {
-      "question": "Realizând expansiunea atributului din enunțul „Tema scrisă în pauză a fost corectă”, obținem:",
-      "choices": ["Tema pe care am scris-o în pauză...", "Tema care a fost scrisă în pauză...", "Tema ce se scrie în pauză...", "Tema de scris în pauză..."],
+      "question": "În textul „România Pitorească” (Link text: https://ro.wikisource.org/wiki/Rom%C3%A2nia_Pitoreasc%C4%83), Vlahuță descrie Dunărea folosind sintagma „**clocot** de valuri”, care sugerează:",
+      "choices": ["Liniștea apei", "Dinamismul și forța apei", "Culoarea apei", "Adâncimea apei"],
       "answerIndex": 1,
-      "explanation": "Atributul adjectival „scrisă” se transformă într-o propoziție atributivă introdusă prin „care” + verbul la pasiv: „care a fost scrisă” [7]."
+      "explanation": "Termenul „clocot” este o metaforă care sugerează mișcarea violentă, agitată și zgomotoasă a apei."
     },
     {
-      "question": "Identifică figura de stil din versul: „Și un miros venea adormitor” (Mihai Eminescu).",
-      "choices": ["Personificare", "Oximoron", "Epitet", "Hiperbolă"],
+      "question": "Alege varianta corectă la forma negativă: „Nu **fi** / **fii** trist!”",
+      "choices": ["fii", "fi"],
+      "answerIndex": 1,
+      "explanation": "Imperativul negativ al verbului „a fi” se scrie cu un singur 'i'."
+    },
+    {
+      "question": "În propoziția „Am observat **că ai întârziat**”, propoziția subordonată este:",
+      "choices": ["Subiectivă", "Completivă Directă", "Atributivă", "Circumstanțială de cauză"],
+      "answerIndex": 1,
+      "explanation": "Întrebarea se pune verbului regent: „Ce am observat?” -> „că ai întârziat” (Completivă Directă)."
+    },
+    {
+      "question": "Identifică sinonimul potrivit pentru cuvântul **distinsă** în contextul: „O prezență distinsă.”",
+      "choices": ["Obișnuită", "Remarcabilă", "Ștearsă", "Veselă"],
+      "answerIndex": 1,
+      "explanation": "„Distinsă” înseamnă nobilă, deosebită, care iese în evidență (remarcabilă)."
+    },
+    {
+      "question": "Valoarea morfologică a cuvântului **a munci** din enunțul „A munci este onorabil” este:",
+      "choices": ["Verb la indicativ", "Substantiv", "Verb la infinitiv", "Adjectiv"],
       "answerIndex": 2,
-      "explanation": "Cuvântul „adormitor” determină substantivul „miros”, atribuindu-i o însușire deosebită, fiind un epitet [8]."
+      "explanation": "Este forma de dicționar a verbului, precedată de „a”, specifică modului infinitiv."
     },
     {
-      "question": "Alege varianta corectă:",
-      "choices": ["Dragele mele prietene", "Dragile mele prietene", "Dragiile mele prietene", "Dragăle mele prietene"],
-      "answerIndex": 0,
-      "explanation": "Forma corectă articulată a adjectivului „drag” la feminin plural este „dragele” (dragă -> drage -> dragele) [4]."
-    },
-    {
-      "question": "În fabula „Vulpea în livadă”, figura de stil predominantă este:",
-      "choices": ["Metafora", "Personificarea", "Antiteza", "Comparația"],
-      "answerIndex": 1,
-      "explanation": "Vulpea este un personaj reprezentativ prin care sunt redate trăsături umane (ipocrizia), figura de stil fiind personificarea [9]."
-    },
-    {
-      "question": "Ce funcție sintactică are cuvântul subliniat în propoziția: „Ana, fii mai calmă!”?",
-      "choices": ["Predicat verbal", "Predicat nominal", "Subiect", "Complement direct"],
-      "answerIndex": 1,
-      "explanation": "Verbul „a fi” este copulativ (la imperativ), formând împreună cu numele predicativ „mai calmă” un predicat nominal [10]."
-    },
-    {
-      "question": "Sinonimul contextual pentru cuvântul „distinsă” în expresia „o prezență distinsă” este:",
-      "choices": ["frumoasă", "remarcabilă", "destinsă", "clară"],
-      "answerIndex": 1,
-      "explanation": "În context, „distinsă” înseamnă o prezență care iese în evidență, deci „remarcabilă” [11]."
-    },
-    {
-      "question": "În enunțul „Am observat că ai lipsit de la oră”, propoziția subordonată este:",
-      "choices": ["Atributivă", "Completivă directă", "Subiectivă", "Completivă indirectă"],
-      "answerIndex": 1,
-      "explanation": "Propoziția răspunde la întrebarea „ce am observat?” pusă verbului regent, fiind o Completivă Directă [5]."
-    },
-    {
-      "question": "Tema poeziei „În parc” de Ion Pillat este:",
-      "choices": ["Iubirea imposibilă", "Trecerea ireversibilă a timpului", "Războiul", "Copilăria fericită"],
-      "answerIndex": 1,
-      "explanation": "Indici precum „târziu”, „de-altădată” și „trecutul” sugerează tema trecerii timpului și a memoriei afective [12]."
-    },
-    {
-      "question": "Alege varianta corectă:",
-      "choices": ["Nu se merită să mergi acolo.", "Nu merită să mergi acolo.", "Nu se merită a merge acolo.", "Nu merita-se să mergi acolo."],
-      "answerIndex": 1,
-      "explanation": "Verbul „a merita” nu este reflexiv, deci forma corectă este „nu merită” [4]."
-    },
-    {
-      "question": "În propoziția „Doar al patrulea m-a salutat”, subiectul este exprimat prin:",
-      "choices": ["Numeral cardinal", "Numeral ordinal", "Substantiv", "Pronume"],
-      "answerIndex": 1,
-      "explanation": "„Al patrulea” este un numeral ordinal cu valoare substantivală care îndeplinește funcția de subiect [10]."
-    },
-    {
-      "question": "Contragerea subordonatei din fraza „Cartea pe care a cumpărat-o Iulian este în bancă” este:",
-      "choices": ["Cartea cumpărată de Iulian...", "Cartea de cumpărat...", "Cartea cumpărând...", "Cartea lui Iulian..."],
-      "answerIndex": 0,
-      "explanation": "Propoziția atributivă „pe care a cumpărat-o” se reduce la atributul adjectival (participial) „cumpărată” [7]."
-    },
-    {
-      "question": "Ce mărci lexico-gramaticale arată implicarea afectivă în „Fiind băiet păduri cutreieram”?",
-      "choices": ["Verbe la persoana a III-a", "Verbe și pronume la persoana I", "Substantive la plural", "Adjective cromatice"],
-      "answerIndex": 1,
-      "explanation": "Mărcile persoanei I („cutreieram”, „mă”, „mi”, „aud”) subliniază subiectivitatea și trăirea directă a eului liric [13]."
-    },
-    {
-      "question": "Alege varianta corectă pentru numeralul 12 la feminin:",
-      "choices": ["Doișpe colege", "Doisprezece colege", "Douăsprezece colege", "Douăspe colege"],
+      "question": "În enunțul „Mașina **vecinului** este roșie”, substantivul evidențiat este în cazul:",
+      "choices": ["Nominativ", "Acuzativ", "Genitiv", "Dativ"],
       "answerIndex": 2,
-      "explanation": "La genul feminin, numeralul cardinal 12 are forma „douăsprezece” (pentru că are la bază „două”, nu „doi”) [4]."
+      "explanation": "Indică posesorul mașinii (a cui mașină?), deci este în cazul Genitiv."
     },
     {
-      "question": "În propoziția „Prietenii lui Harap-Alb au dovedit bunătate”, cazul substantivului „Harap-Alb” este:",
-      "choices": ["Nominativ", "Acuzativ", "Dativ", "Genitiv"],
-      "answerIndex": 3,
-      "explanation": "Structura „Prietenii lui Harap-Alb” indică posesia (ai cui prieteni?), iar „lui” este marca specifică Genitivului la nume proprii masculine [3]."
-    },
-    {
-      "question": "Care este forma corectă de imperativ negativ a verbului „a fi”?",
-      "choices": ["Nu fii supărat!", "Nu fi supărat!", "Nu fiți supărat!", "Nu fii!"],
+      "question": "Forma corectă de plural articulat pentru adjectivul „dragă” este:",
+      "choices": ["Dragile mele", "Dragele mele"],
       "answerIndex": 1,
-      "explanation": "La imperativ negativ, verbul „a fi” se scrie cu un singur „i” (Nu fi!), spre deosebire de afirmativ (Fii!) [4]."
+      "explanation": "Pluralul feminin nearticulat este „drage”; prin articulare devine „dragele”."
     },
     {
-      "question": "În secvența „Ocoli o întreagă livadă ca să arate că nu contează doar jumătate...”, cuvintele subliniate sunt:",
-      "choices": ["Sinonime", "Antonime", "Omonime", "Paronime"],
+      "question": "Propoziția „Filmul este **de văzut**” conține un predicat:",
+      "choices": ["Verbal", "Nominal", "Adverbial", "Interjecțional"],
       "answerIndex": 1,
-      "explanation": "„Întreagă” și „jumătate” se află într-o relație de opoziție (totul vs. parte), fiind antonime [11]."
+      "explanation": "Format din verbul copulativ „este” + numele predicativ „de văzut” (verb la supin)."
     },
     {
-      "question": "Verbul din propoziția „A citi înseamnă a cunoaște” se află la modul:",
-      "choices": ["Indicativ", "Conjunctiv", "Infinitiv", "Gerunziu"],
+      "question": "În fraza „Primul **care** a răspuns a primit nota zece”, cuvântul evidențiat este:",
+      "choices": ["Adjectiv pronominal", "Pronume relativ", "Pronume interogativ", "Conjuncție"],
+      "answerIndex": 1,
+      "explanation": "„Care” face relația între propoziții și înlocuiește un substantiv sau numeral din regenta (antecedentul „primul”)."
+    },
+    {
+      "question": "Expansiunea atributului din propoziția „Tema **scrisă** a fost corectată” este:",
+      "choices": ["Tema de scris...", "Tema pe care am scris-o...", "Tema care a fost scrisă...", "Tema scriind..."],
       "answerIndex": 2,
-      "explanation": "Forma „a citi” (prepoziția 'a' + verb) este specifică modului Infinitiv [14]."
+      "explanation": "Atributul participial „scrisă” devine o propoziție atributivă pasivă introdusă prin „care”."
     },
     {
-      "question": "Cuvântul „fata” în structura „Fata aceea” este determinat de:",
-      "choices": ["Un adjectiv posesiv", "Un adjectiv demonstrativ", "Un pronume personal", "Un numeral"],
+      "question": "În enunțul „I-am dat **Mariei** cartea”, substantivul propriu este în cazul:",
+      "choices": ["Genitiv", "Dativ", "Acuzativ", "Vocativ"],
       "answerIndex": 1,
-      "explanation": "„Aceea” este un adjectiv pronominal demonstrativ de depărtare care se acordă cu substantivul „fata” [4]."
+      "explanation": "Răspunde la întrebarea „cui i-am dat?”, deci este în cazul Dativ."
     },
     {
-      "question": "Care este rolul cratimei în structura „gura-abia închisă” din poezia eminesciană?",
-      "choices": ["Marchează o pauză în vorbire", "Leagă două substantive", "Marchează rostirea într-o singură silabă a două cuvinte diferite", "Este o greșeală de tipar"],
+      "question": "Cuvintele **întreagă** și **jumătate** în contextul „O livadă întreagă... doar o jumătate” sunt:",
+      "choices": ["Sinonime", "Antonime", "Paronime", "Omonime"],
+      "answerIndex": 1,
+      "explanation": "Ele exprimă idei opuse (totul vs o parte), fiind antonime."
+    },
+    {
+      "question": "Verbul a fi în enunțul „Ana **este** la școală” are valoare:",
+      "choices": ["Copulativă", "Predicativă", "Auxiliară", "Impersonală"],
+      "answerIndex": 1,
+      "explanation": "Aici „este” are sensul de „se află”, „există”, deci este predicativ (formează singur predicatul verbal)."
+    },
+    {
+      "question": "Pronumele reflexiv are forme proprii (specifice) doar pentru:",
+      "choices": ["Persoana I", "Persoana a II-a", "Persoana a III-a", "Toate persoanele"],
       "answerIndex": 2,
-      "explanation": "În poezie, cratima este folosită frecvent pentru a păstra măsura versurilor prin elidarea unei vocale sau rostirea legată (sinalefă) [15]."
+      "explanation": "Doar la persoana a III-a există forme precum „sie”, „sine”, „s-”, „își”. La restul persoanelor se folosesc formele pronumelui personal."
+    },
+    {
+      "question": "Alege varianta corectă: „Nu **se merită** să te superi.” / „Nu **merită** să te superi.”",
+      "choices": ["Nu se merită", "Nu merită"],
+      "answerIndex": 1,
+      "explanation": "Verbul „a merita” nu este reflexiv în limba română standard."
     }
   ];
 
-  // === 2) Logică quiz ===
+  // === logică quiz ===
   const app = document.getElementById("app");
   const qCounter = document.getElementById("qCounter");
   const timeLeftEl = document.getElementById("timeLeft");
@@ -218,9 +219,7 @@
   function grade1to10(correct, total) {
     if (total <= 0) return 1;
     const ratio = correct / total;
-    // Notă proporțională: 0% -> 1, 100% -> 10
-    const g = 1 + ratio * 9;
-    // rotunjire la 2 zecimale (poți schimba)
+    const g = 1 + ratio * 9; // 0% -> 1, 100% -> 10
     return Math.round(g * 100) / 100;
   }
 
@@ -243,10 +242,17 @@
 
       if (remaining <= 0) {
         stopTimer();
-        // time's up -> show correct + explanation, mark wrong
         revealAnswer(null, true);
       }
     }, 1000);
+  }
+
+  function linkifyQuestionText(text) {
+    // Transformă "Link text: https://..." în link clicabil
+    // (fără să strice restul textului)
+    return text.replace(/Link text:\s*(https?:\/\/\S+)/g, (m, url) => {
+      return `Link text: <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+    });
   }
 
   function renderQuestion(){
@@ -255,7 +261,7 @@
     qCounter.textContent = `Întrebarea ${idx + 1} / ${questions.length}`;
 
     app.innerHTML = `
-      <h2>${q.question}</h2>
+      <h2>${linkifyQuestionText(q.question)}</h2>
       <div class="choices">
         ${q.choices.map((c, i) => `
           <label class="choice">
@@ -332,17 +338,13 @@
 
     document.getElementById("nextBtn").onclick = () => {
       idx += 1;
-      if (idx < questions.length) {
-        renderQuestion();
-      } else {
-        renderFinal();
-      }
+      if (idx < questions.length) renderQuestion();
+      else renderFinal();
     };
   }
 
   function renderFinal(){
     stopTimer();
-    // ascunde timer bar (opțional)
     timeLeftEl.textContent = "0";
     timeBar.style.width = "0%";
     qCounter.textContent = "Final";
@@ -371,7 +373,6 @@
     };
   }
 
-  // start
   renderQuestion();
 </script>
 
