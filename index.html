@@ -10,7 +10,7 @@
     .badge { display:inline-block; padding:6px 10px; border:1px solid #ddd; border-radius:999px; font-size:14px; }
     .card { border:1px solid #e5e5e5; border-radius:14px; padding:16px; margin:14px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
     h1 { margin: 0 0 10px; font-size: 22px; }
-    h2 { margin: 0 0 10px; font-size: 18px; }
+    h2 { margin: 0 0 10px; font-size: 18px; line-height: 1.35; }
     .choices { margin: 10px 0; }
     .choice { display:flex; gap:10px; padding:10px; border:1px solid #eee; border-radius:12px; margin:8px 0; cursor:pointer; }
     .choice:hover { background: #fafafa; }
@@ -39,9 +39,9 @@
 
 <div class="topbar">
   <div class="badge" id="qCounter">Întrebarea 1 / 1</div>
-  <div class="badge timer">⏳ Timp rămas: <span id="timeLeft">30</span>s</div>
+  <div class="badge timer" id="timerBadge">⏳ Timp rămas: <span id="timeLeft">30</span>s</div>
 </div>
-<div class="progress"><div id="timeBar"></div></div>
+<div class="progress" id="progressWrap"><div id="timeBar"></div></div>
 
 <div id="app" class="card"></div>
 
@@ -67,7 +67,7 @@
       "explanation": "Verbul „a crea” se conjugă după modelul „a lucra” (lucrăm -> creăm)."
     },
     {
-      "question": "În poezia „Fiind băiet păduri cutreieram” ( Link text: https://ro.wikisource.org/wiki/Fiind_b%C4%83iet_p%C4%83duri_cutreieram ), versul „Un **freamăt** lin trecea din ram în ram” conține o imagine:",
+      "question": "În poezia „Fiind băiet păduri cutreieram” (Link text: https://ro.wikisource.org/wiki/Fiind_b%C4%83iet_p%C4%83duri_cutreieram), versul „Un **freamăt** lin trecea din ram în ram” conține o imagine:",
       "choices": ["Vizuală", "Auditivă", "Olfactivă", "Gustativă"],
       "answerIndex": 1,
       "explanation": "Cuvântul „freamăt” sugerează sunetul produs de vânt sau de frunze, fiind o imagine auditivă."
@@ -79,7 +79,7 @@
       "explanation": "Propoziția determină substantivul „focul” (care foc?), îndeplinind funcția de atribut."
     },
     {
-      "question": "În fabula „Vulpea în livadă” (Link text: https://ro.wikisource.org/wiki/Vulpea_%C3%AEn_livad%C4%83 ), figura de stil prin care sunt atribuite vulpii trăsături umane (ipocrizia) este:",
+      "question": "În fabula „Vulpea în livadă” (Link text: https://ro.wikisource.org/wiki/Vulpea_%C3%AEn_livad%C4%83), figura de stil prin care sunt atribuite vulpii trăsături umane (ipocrizia) este:",
       "choices": ["Metafora", "Personificarea", "Epitetul", "Hiperbola"],
       "answerIndex": 1,
       "explanation": "Personificarea este procedeul prin care animalele primesc însușiri umane, specific fabulei."
@@ -91,7 +91,7 @@
       "explanation": "Imperativul afirmativ al verbului „a fi” se scrie obligatoriu cu doi 'i'."
     },
     {
-      "question": "În versurile din „Dimineața” de Vasile Alecsandri (Link text: https://ro.wikisource.org/wiki/Diminea%C8%9Ba_(Alecsandri) ): „Raze vii sărută june flori de primăvară”, verbul **sărută** construiește o:",
+      "question": "În versurile din „Dimineața” de Vasile Alecsandri (Link text: https://ro.wikisource.org/wiki/Diminea%C8%9Ba_(Alecsandri)): „Raze vii sărută june flori de primăvară”, verbul **sărută** construiește o:",
       "choices": ["Comparație", "Personificare", "Enumerație", "Repetiție"],
       "answerIndex": 1,
       "explanation": "Razele soarelui primesc o însușire umană (acțiunea de a săruta), realizând o personificare."
@@ -109,7 +109,7 @@
       "explanation": "Cuvântul răspunde la întrebarea „cui (i-am mulțumit)?”, specifică Dativului."
     },
     {
-      "question": "În textul „România Pitorească” (Link text: https://ro.wikisource.org/wiki/Rom%C3%A2nia_Pitoreasc%C4%83 ), Vlahuță descrie Dunărea folosind sintagma „**clocot** de valuri”, care sugerează:",
+      "question": "În textul „România Pitorească” (Link text: https://ro.wikisource.org/wiki/Rom%C3%A2nia_Pitoreasc%C4%83), Vlahuță descrie Dunărea folosind sintagma „**clocot** de valuri”, care sugerează:",
       "choices": ["Liniștea apei", "Dinamismul și forța apei", "Culoarea apei", "Adâncimea apei"],
       "answerIndex": 1,
       "explanation": "Termenul „clocot” este o metaforă care sugerează mișcarea violentă, agitată și zgomotoasă a apei."
@@ -205,13 +205,15 @@
   const qCounter = document.getElementById("qCounter");
   const timeLeftEl = document.getElementById("timeLeft");
   const timeBar = document.getElementById("timeBar");
+  const timerBadge = document.getElementById("timerBadge");
+  const progressWrap = document.getElementById("progressWrap");
 
-  const TIME_PER_Q = 30;
+  const DEFAULT_TIME_PER_Q = 30;
 
   let idx = 0;
   let score = 0;
   let timer = null;
-  let remaining = TIME_PER_Q;
+  let remaining = DEFAULT_TIME_PER_Q;
   let locked = false;
 
   function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
@@ -227,17 +229,32 @@
     if (timer) { clearInterval(timer); timer = null; }
   }
 
-  function startTimer(){
+  function questionHasLink(text){
+    // detectează link în paranteze: ( ... http... )
+    return /\([^)]*https?:\/\/[^)]*\)/.test(text);
+  }
+
+  function setInfiniteTimerUI(){
     stopTimer();
-    remaining = TIME_PER_Q;
+    timerBadge.innerHTML = `⏳ Timp: <span id="timeLeft">∞</span>`;
+    progressWrap.style.display = "none";
+  }
+
+  function startTimer(seconds){
+    stopTimer();
+    remaining = seconds;
     timeLeftEl.textContent = remaining;
     timeBar.style.width = "100%";
+    progressWrap.style.display = "block";
+    timerBadge.innerHTML = `⏳ Timp rămas: <span id="timeLeft">${remaining}</span>s`;
 
     timer = setInterval(() => {
       remaining -= 1;
-      timeLeftEl.textContent = remaining;
+      // re-select timeLeft element (fiindcă îl recreăm în innerHTML la fiecare întrebare)
+      const tl = document.getElementById("timeLeft");
+      if (tl) tl.textContent = remaining;
 
-      const pct = (remaining / TIME_PER_Q) * 100;
+      const pct = (remaining / seconds) * 100;
       timeBar.style.width = clamp(pct, 0, 100) + "%";
 
       if (remaining <= 0) {
@@ -247,12 +264,29 @@
     }, 1000);
   }
 
-  function linkifyQuestionText(text) {
-    // Transformă "Link text: https://..." în link clicabil
-    // (fără să strice restul textului)
-    return text.replace(/Link text:\s*(https?:\/\/\S+)/g, (m, url) => {
+  function formatQuestionText(raw) {
+    let text = raw;
+
+    // 1) **text** -> <strong>text</strong>
+    text = text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+
+    // 2) link în paranteze: ( ... https://... ) -> păstrează parantezele, fă link clicabil
+    //    + "lasă spațiu între finalul link-ului și paranteză" => "URL </a> )"
+    text = text.replace(/\(([^)]*?)(https?:\/\/\S+?)([^)]*?)\)/g, (m, before, url, after) => {
+      const b = (before || "").trim();
+      const a = (after || "").trim();
+      const left = b ? b + " " : "";
+      const right = a ? " " + a : "";
+      return `(${left}<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a> ${right})`;
+    });
+
+    // 3) "Link text: URL" -> clicabil (și păstrează ",)" etc.)
+    //    + spațiu între finalul link-ului și paranteză: ...</a> )
+    text = text.replace(/Link text:\s*(https?:\/\/\S+)/g, (m, url) => {
       return `Link text: <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
     });
+
+    return text;
   }
 
   function renderQuestion(){
@@ -260,8 +294,10 @@
     const q = questions[idx];
     qCounter.textContent = `Întrebarea ${idx + 1} / ${questions.length}`;
 
+    const hasLink = questionHasLink(q.question) || /Link text:\s*https?:\/\//.test(q.question);
+
     app.innerHTML = `
-      <h2>${linkifyQuestionText(q.question)}</h2>
+      <h2>${formatQuestionText(q.question)}</h2>
       <div class="choices">
         ${q.choices.map((c, i) => `
           <label class="choice">
@@ -277,7 +313,7 @@
       <div id="feedback"></div>
       <div class="footer small muted">
         <div>Scor curent: <b id="scoreNow">${score}</b> / ${questions.length}</div>
-        <div>Timp / întrebare: <code>${TIME_PER_Q}s</code></div>
+        <div>${hasLink ? `Timp / întrebare: <code>∞</code>` : `Timp / întrebare: <code>${DEFAULT_TIME_PER_Q}s</code>`}</div>
       </div>
     `;
 
@@ -297,7 +333,12 @@
       revealAnswer(null, false);
     };
 
-    startTimer();
+    if (hasLink) {
+      setInfiniteTimerUI();
+    } else {
+      // re-legăm timeLeftEl (fiindcă l-am recreat în timerBadge)
+      startTimer(DEFAULT_TIME_PER_Q);
+    }
   }
 
   function revealAnswer(selectedIndex, timedOut){
@@ -345,9 +386,9 @@
 
   function renderFinal(){
     stopTimer();
-    timeLeftEl.textContent = "0";
-    timeBar.style.width = "0%";
     qCounter.textContent = "Final";
+    timerBadge.innerHTML = `⏳ Timp: <span id="timeLeft">—</span>`;
+    progressWrap.style.display = "none";
 
     const total = questions.length;
     const nota = grade1to10(score, total);
