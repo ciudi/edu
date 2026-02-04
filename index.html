@@ -30,7 +30,7 @@
     .footer { margin-top: 18px; display:flex; justify-content:space-between; gap: 12px; flex-wrap:wrap; }
     .small { font-size: 13px; }
     code { background:#f6f6f6; padding:2px 6px; border-radius:8px; }
-    a { color: inherit; }
+    a { color: inherit; text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -46,10 +46,9 @@
 <div id="app" class="card"></div>
 
 <script>
-  // === JSON-ul tău ===
   const questions = [
     {
-      "question": "În basmul cult „Povestea lui Harap-Alb” (Link text: https://ro.wikisource.org/wiki/Povestea_lui_Harap-Alb ), valoarea morală principală pe care o dobândește protagonistul este:",
+      "question": "În basmul cult „Povestea lui Harap-Alb” (Link text: https://ro.wikisource.org/wiki/Povestea_lui_Harap-Alb), valoarea morală principală pe care o dobândește protagonistul este:",
       "choices": ["Vicleșugul", "Curajul și asumarea responsabilității", "Lăcomia", "Indiferența"],
       "answerIndex": 1,
       "explanation": "Călătoria lui Harap-Alb este un drum de inițiere în care acesta învață să își asume responsabilități și să dea dovadă de curaj și onestitate."
@@ -67,7 +66,7 @@
       "explanation": "Verbul „a crea” se conjugă după modelul „a lucra” (lucrăm -> creăm)."
     },
     {
-      "question": "În poezia „Fiind băiet păduri cutreieram” (Link text: https://ro.wikisource.org/wiki/Fiind_b%C4%83iet_p%C4%83duri_cutreieram ), versul „Un **freamăt** lin trecea din ram în ram” conține o imagine:",
+      "question": "În poezia „Fiind băiet păduri cutreieram” (Link text: https://ro.wikisource.org/wiki/Fiind_b%C4%83iet_p%C4%83duri_cutreieram), versul „Un **freamăt** lin trecea din ram în ram” conține o imagine:",
       "choices": ["Vizuală", "Auditivă", "Olfactivă", "Gustativă"],
       "answerIndex": 1,
       "explanation": "Cuvântul „freamăt” sugerează sunetul produs de vânt sau de frunze, fiind o imagine auditivă."
@@ -79,7 +78,7 @@
       "explanation": "Propoziția determină substantivul „focul” (care foc?), îndeplinind funcția de atribut."
     },
     {
-      "question": "În fabula „Vulpea în livadă” (Link text: https://ro.wikisource.org/wiki/Vulpea_%C3%AEn_livad%C4%83 ), figura de stil prin care sunt atribuite vulpii trăsături umane (ipocrizia) este:",
+      "question": "În fabula „Vulpea în livadă” (Link text: https://ro.wikisource.org/wiki/Vulpea_%C3%AEn_livad%C4%83), figura de stil prin care sunt atribuite vulpii trăsături umane (ipocrizia) este:",
       "choices": ["Metafora", "Personificarea", "Epitetul", "Hiperbola"],
       "answerIndex": 1,
       "explanation": "Personificarea este procedeul prin care animalele primesc însușiri umane, specific fabulei."
@@ -91,7 +90,7 @@
       "explanation": "Imperativul afirmativ al verbului „a fi” se scrie obligatoriu cu doi 'i'."
     },
     {
-      "question": "În versurile din „Dimineața” de Vasile Alecsandri (Link text: https://ro.wikisource.org/wiki/Diminea%C8%9Ba_(Alecsandri) ): „Raze vii sărută june flori de primăvară”, verbul **sărută** construiește o:",
+      "question": "În versurile din „Dimineața” de Vasile Alecsandri (Link text: https://ro.wikisource.org/wiki/Diminea%C8%9Ba_(Alecsandri)): „Raze vii sărută june flori de primăvară”, verbul **sărută** construiește o:",
       "choices": ["Comparație", "Personificare", "Enumerație", "Repetiție"],
       "answerIndex": 1,
       "explanation": "Razele soarelui primesc o însușire umană (acțiunea de a săruta), realizând o personificare."
@@ -109,7 +108,7 @@
       "explanation": "Cuvântul răspunde la întrebarea „cui (i-am mulțumit)?”, specifică Dativului."
     },
     {
-      "question": "În textul „România Pitorească” ( Link text: https://ro.wikisource.org/wiki/Rom%C3%A2nia_Pitoreasc%C4%83 ), Vlahuță descrie Dunărea folosind sintagma „**clocot** de valuri”, care sugerează:",
+      "question": "În textul „România Pitorească” (Link text: https://ro.wikisource.org/wiki/Rom%C3%A2nia_Pitoreasc%C4%83), Vlahuță descrie Dunărea folosind sintagma „**clocot** de valuri”, care sugerează:",
       "choices": ["Liniștea apei", "Dinamismul și forța apei", "Culoarea apei", "Adâncimea apei"],
       "answerIndex": 1,
       "explanation": "Termenul „clocot” este o metaforă care sugerează mișcarea violentă, agitată și zgomotoasă a apei."
@@ -200,10 +199,8 @@
     }
   ];
 
-  // === logică quiz ===
   const app = document.getElementById("app");
   const qCounter = document.getElementById("qCounter");
-  const timeLeftEl = document.getElementById("timeLeft");
   const timeBar = document.getElementById("timeBar");
   const timerBadge = document.getElementById("timerBadge");
   const progressWrap = document.getElementById("progressWrap");
@@ -229,9 +226,9 @@
     if (timer) { clearInterval(timer); timer = null; }
   }
 
-  function questionHasLink(text){
-    // detectează link în paranteze: ( ... http... )
-    return /\([^)]*https?:\/\/[^)]*\)/.test(text);
+  function questionHasLinkText(q) {
+    // întrebările cu "Link text:" -> timp infinit
+    return /Link text:\s*https?:\/\/[^\s)]+/.test(q);
   }
 
   function setInfiniteTimerUI(){
@@ -243,14 +240,12 @@
   function startTimer(seconds){
     stopTimer();
     remaining = seconds;
-    timeLeftEl.textContent = remaining;
-    timeBar.style.width = "100%";
     progressWrap.style.display = "block";
     timerBadge.innerHTML = `⏳ Timp rămas: <span id="timeLeft">${remaining}</span>s`;
+    timeBar.style.width = "100%";
 
     timer = setInterval(() => {
       remaining -= 1;
-      // re-select timeLeft element (fiindcă îl recreăm în innerHTML la fiecare întrebare)
       const tl = document.getElementById("timeLeft");
       if (tl) tl.textContent = remaining;
 
@@ -267,24 +262,36 @@
   function formatQuestionText(raw) {
     let text = raw;
 
-    // 1) **text** -> <strong>text</strong>
+    // 1) **...** -> bold
     text = text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
 
-    // 2) link în paranteze: ( ... https://... ) -> păstrează parantezele, fă link clicabil
-    //    + "lasă spațiu între finalul link-ului și paranteză" => "URL </a> )"
-    text = text.replace(/\(([^)]*?)(https?:\/\/\S+?)([^)]*?)\)/g, (m, before, url, after) => {
-      const b = (before || "").trim();
-      const a = (after || "").trim();
-      const left = b ? b + " " : "";
-      const right = a ? " " + a : "";
-      return `(${left}<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a> ${right})`;
-    });
+    // 2) (Link text: URL) -> link + spațiu înainte de ")"
+    // URL: până la prima paranteză închisă sau spațiu
+    text = text.replace(
+      /\(Link text:\s*(https?:\/\/[^\s)]+)\)/g,
+      (m, url) => `(Link text: <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a> )`
+    );
 
-    // 3) ": URL" -> clicabil (și păstrează ",)" etc.)
-    //    + spațiu între finalul link-ului și paranteză: ...</a> )
-    text = text.replace(/Link text:\s*(https?:\/\/\S+)/g, (m, url) => {
-      return `Link text: <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-    });
+    // 3) Link text: URL (urmat de , sau ) sau . sau : etc) -> link fără să "mănânce" punctuația
+    text = text.replace(
+      /Link text:\s*(https?:\/\/[^\s),.]+)([),.]?)/g,
+      (m, url, punct) => {
+        const p = punct ? `${punct}` : "";
+        return `Link text: <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>${p}`;
+      }
+    );
+
+    // 4) Alte URL-uri în paranteze (dacă apar), dar NU re-procesa dacă deja există <a
+    // ex: (vezi https://exemplu.ro) => (vezi <a...>...</a> )
+    if (!text.includes("<a ")) {
+      text = text.replace(/\(([^)]*?)(https?:\/\/[^\s)]+)([^)]*?)\)/g, (m, before, url, after) => {
+        const b = (before || "").trim();
+        const a = (after || "").trim();
+        const left = b ? b + " " : "";
+        const right = a ? " " + a : "";
+        return `(${left}<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a> ${right})`;
+      });
+    }
 
     return text;
   }
@@ -294,7 +301,7 @@
     const q = questions[idx];
     qCounter.textContent = `Întrebarea ${idx + 1} / ${questions.length}`;
 
-    const hasLink = questionHasLink(q.question) || /Link text:\s*https?:\/\//.test(q.question);
+    const hasLink = questionHasLinkText(q.question);
 
     app.innerHTML = `
       <h2>${formatQuestionText(q.question)}</h2>
@@ -321,8 +328,7 @@
       if (locked) return;
       const picked = app.querySelector('input[name="choice"]:checked');
       if (!picked) {
-        const fb = document.getElementById("feedback");
-        fb.innerHTML = `<div class="result">Alege un răspuns înainte să trimiți.</div>`;
+        document.getElementById("feedback").innerHTML = `<div class="result">Alege un răspuns înainte să trimiți.</div>`;
         return;
       }
       revealAnswer(Number(picked.value), false);
@@ -333,12 +339,8 @@
       revealAnswer(null, false);
     };
 
-    if (hasLink) {
-      setInfiniteTimerUI();
-    } else {
-      // re-legăm timeLeftEl (fiindcă l-am recreat în timerBadge)
-      startTimer(DEFAULT_TIME_PER_Q);
-    }
+    if (hasLink) setInfiniteTimerUI();
+    else startTimer(DEFAULT_TIME_PER_Q);
   }
 
   function revealAnswer(selectedIndex, timedOut){
@@ -351,7 +353,6 @@
 
     if (isCorrect) score += 1;
 
-    const fb = document.getElementById("feedback");
     const pickedText = (selectedIndex === null)
       ? (timedOut ? "⏰ Timpul a expirat." : "Ai sărit întrebarea.")
       : `Ai ales: <b>${q.choices[selectedIndex]}</b>`;
@@ -359,7 +360,7 @@
     const status = isCorrect ? "✅ Corect" : "❌ Greșit";
     const boxClass = isCorrect ? "result ok" : "result bad";
 
-    fb.innerHTML = `
+    document.getElementById("feedback").innerHTML = `
       <div class="${boxClass}">
         <div style="font-size:16px; margin-bottom:6px;"><b>${status}</b></div>
         <div>${pickedText}</div>
