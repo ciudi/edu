@@ -31,6 +31,7 @@
     .small { font-size: 13px; }
     code { background:#f6f6f6; padding:2px 6px; border-radius:8px; }
     a { color: inherit; text-decoration: underline; }
+    .emph { font-weight: 700; text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -218,7 +219,7 @@
   function grade1to10(correct, total) {
     if (total <= 0) return 1;
     const ratio = correct / total;
-    const g = 1 + ratio * 9; // 0% -> 1, 100% -> 10
+    const g = 1 + ratio * 9;
     return Math.round(g * 100) / 100;
   }
 
@@ -227,7 +228,6 @@
   }
 
   function questionHasLinkText(q) {
-    // întrebările cu "Link text:" -> timp infinit
     return /Link text:\s*https?:\/\/[^\s)]+/.test(q);
   }
 
@@ -262,36 +262,20 @@
   function formatQuestionText(raw) {
     let text = raw;
 
-    // 1) **...** -> bold
-    text = text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+    // **...** -> bold + underline
+    text = text.replace(/\*\*(.+?)\*\*/g, '<span class="emph">$1</span>');
 
-    // 2) (Link text: URL) -> link + spațiu înainte de ")"
-    // URL: până la prima paranteză închisă sau spațiu
+    // (Link text: URL) -> link + spațiu înainte de ")"
     text = text.replace(
       /\(Link text:\s*(https?:\/\/[^\s)]+)\)/g,
       (m, url) => `(Link text: <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a> )`
     );
 
-    // 3) Link text: URL (urmat de , sau ) sau . sau : etc) -> link fără să "mănânce" punctuația
+    // Link text: URL (cu punctuație după) -> link
     text = text.replace(
       /Link text:\s*(https?:\/\/[^\s),.]+)([),.]?)/g,
-      (m, url, punct) => {
-        const p = punct ? `${punct}` : "";
-        return `Link text: <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>${p}`;
-      }
+      (m, url, punct) => `Link text: <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>${punct || ""}`
     );
-
-    // 4) Alte URL-uri în paranteze (dacă apar), dar NU re-procesa dacă deja există <a
-    // ex: (vezi https://exemplu.ro) => (vezi <a...>...</a> )
-    if (!text.includes("<a ")) {
-      text = text.replace(/\(([^)]*?)(https?:\/\/[^\s)]+)([^)]*?)\)/g, (m, before, url, after) => {
-        const b = (before || "").trim();
-        const a = (after || "").trim();
-        const left = b ? b + " " : "";
-        const right = a ? " " + a : "";
-        return `(${left}<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a> ${right})`;
-      });
-    }
 
     return text;
   }
