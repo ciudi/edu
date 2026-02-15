@@ -47,157 +47,157 @@
 <div id="app" class="card"></div>
 
 <script>
-  // === Întrebări (set nou) ===
+  // === Întrebări (JSON-ul tău) ===
   const questions = [
     {
-      "question": "În cuvântul „ceașcă”, numărul de litere și de sunete este:",
-      "choices": ["6 litere și 6 sunete", "6 litere și 5 sunete", "6 litere și 4 sunute", "5 litere și 5 sunete"],
-      "answerIndex": 1,
-      "explanation": "Grupul „ce” urmat de o vocală („a”) notează un singur sunet (consoana [č]), deci cuvântul are 6 litere, dar 5 sunete."
-    },
-    {
-      "question": "Identifică procedeul prin care s-a format cuvântul evidențiat în enunțul: „Fratele său ne-a făcut un **bine**.”",
-      "choices": ["Derivare", "Compunere", "Conversiune", "Împrumut"],
+      "question": "În cuvântul „excursie”, litera **x** notează sunetele: [Sursa 168]",
+      "choices": ["[gz]", "[cs]", "[ks]", "[kz]"],
       "answerIndex": 2,
-      "explanation": "Adverbul „bine” a devenit substantiv prin articulare cu articolul nehotărât „un”, proces numit conversiune."
+      "explanation": "Litera „x” se pronunță [ks] în cuvinte precum „excursie”, „fix”, „axă” și [gz] în cuvinte precum „examen” sau „exercițiu”."
     },
     {
-      "question": "În poezia „Izvorul nopții” de Lucian Blaga (Link text: https://ro.wikisource.org/wiki/Izvorul_nop%C8%9Bii), metafora „**izvorul nopții**” face referire la:",
-      "choices": ["Ochii iubitei", "Lumina lunii", "Un râu de munte", "Părul iubitei"],
+      "question": "Conform regulilor de formare a genitivului, forma corectă pentru „mamă-soacră” este: [Sursa 31]",
+      "choices": ["Mamii-soacre", "Mamei-soacre", "Mamei-soacrei", "Mama-soacrei"],
+      "answerIndex": 1,
+      "explanation": "La substantivele compuse prin cratimă, se articulează primul termen: „mamei-soacre” (nu „mamii” și nu se articulează ambele)."
+    },
+    {
+      "question": "În propoziția „**Hai** acasă!”, cuvântul evidențiat este: [Sursa 177]",
+      "choices": ["Verb la imperativ", "Interjecție predicativă", "Adverb de mod", "Substantiv"],
+      "answerIndex": 1,
+      "explanation": "Interjecțiile precum „hai”, „uite”, „na” pot îndeplini funcția de predicat verbal, numindu-se interjecții predicative."
+    },
+    {
+      "question": "În textul dramatic, o subdiviziune a piesei marcată de lăsarea cortinei se numește: [Sursa 213]",
+      "choices": ["Scenă", "Tablou", "Act", "Replica"],
+      "answerIndex": 2,
+      "explanation": "Actul este subdiviziunea principală a unei opere dramatice, pauza dintre acte fiind marcată de obicei prin lăsarea cortinei."
+    },
+    {
+      "question": "Verbul „a fi” în enunțul „Cartea **a fost citită** de elevi” are rolul de: [Sursa 85]",
+      "choices": ["Verb copulativ", "Verb predicativ", "Verb auxiliar", "Verb impersonal"],
+      "answerIndex": 2,
+      "explanation": "În construcțiile pasive (a fost + participiu), verbul „a fi” este auxiliarul care ajută la formarea diatezei pasive."
+    },
+    {
+      "question": "Cuvântul „weekend” este un neologism împrumutat din limba: [Sursa 182]",
+      "choices": ["Franceză", "Engleză", "Germană", "Italiană"],
+      "answerIndex": 1,
+      "explanation": "Conform listei de împrumuturi recente, termenii precum „design”, „weekend”, „smartphone” provin din engleză."
+    },
+    {
+      "question": "În fraza „Nu a învățat, **ci** a ghicit”, conjuncția „ci” este: [Sursa 204]",
+      "choices": ["Copulativă", "Disjunctivă", "Adversativă", "Concluzivă"],
+      "answerIndex": 2,
+      "explanation": "Conjuncțiile „dar, iar, însă, ci” exprimă opoziția, fiind conjuncții coordonatoare adversative."
+    },
+    {
+      "question": "Realizează contragerea subordonatei din fraza: „Cartea **pe care a cumpărat-o** Iulian este pe bancă.” [Sursa 50]",
+      "choices": ["Cartea cumpărată de Iulian...", "Cartea de cumpărat...", "Cartea cumpărând...", "Cartea lui Iulian..."],
       "answerIndex": 0,
-      "explanation": "Metafora centrală a poeziei asociază ochii negri ai iubitei cu un izvor din care curge noaptea peste lume."
+      "explanation": "Propoziția atributivă se reduce la un atribut adjectival (participial): „Cartea cumpărată de Iulian”."
     },
     {
-      "question": "Alege forma corectă a verbului la imperativ negativ: „Nu **face** gălăgie!” vs „Nu **fă** gălăgie!”",
-      "choices": ["Nu face", "Nu fă"],
+      "question": "Pronumele „dumneavoastră” face parte din categoria: [Sursa 63]",
+      "choices": ["Pronume personal de politețe", "Pronume demonstrativ", "Pronume nehotărât", "Pronume reflexiv"],
       "answerIndex": 0,
-      "explanation": "Imperativul negativ la persoana a II-a singular se formează cu „nu” + infinitivul verbului (a face -> Nu face!). Forma „Nu fă” este incorectă."
+      "explanation": "Formele precum „dumneata”, „dumneavoastră” indică respectul și sunt clasificate ca pronume personale de politețe."
     },
     {
-      "question": "În enunțul „**Lunea** merg la antrenament”, cuvântul evidențiat este:",
-      "choices": ["Substantiv comun", "Adverb de timp", "Adjectiv", "Numeral"],
+      "question": "Figura de stil care constă în repetarea unei consoane pentru efecte sonore (ex: „Vâjâind ca vijelia”) se numește: [Sursa 191]",
+      "choices": ["Asonanță", "Aliterație", "Metaforă", "Oximoron"],
       "answerIndex": 1,
-      "explanation": "Deși provine dintr-un substantiv, „Lunea” răspunde la întrebarea „când?” și exprimă repetabilitatea, devenind adverb de timp prin conversiune."
+      "explanation": "Repetarea consoanelor cu intenție expresivă sau imitativă este definiția aliterației."
     },
     {
-      "question": "Indicațiile scenice (didascaliile) dintr-un text dramatic au rolul de a:",
-      "choices": ["Reda replicile personajelor", "Oferi informații pentru jocul actorilor și decor", "Povesti acțiunea în detaliu", "Caracteriza direct personajele exclusiv"],
-      "answerIndex": 1,
-      "explanation": "Didascaliile sunt instrucțiunile autorului (non-literare) adresate regizorului și actorilor privind decorul, mimica sau gesturile."
-    },
-    {
-      "question": "Termenul argotic „**bișniță**” provine din limba:",
-      "choices": ["Franceză", "Engleză", "Germană", "Turcă"],
-      "answerIndex": 1,
-      "explanation": "Provine din englezescul „business”, adaptat fonetic și semantic în registrul argotic."
-    },
-    {
-      "question": "În versul „Prin vulturi **v**ântul **v**iu **v**uia” („Nunta Zamfirei” - G. Coșbuc), repetiția consoanei „v” este o:",
-      "choices": ["Asonanță", "Aliterație", "Metaforă", "Personificare"],
-      "answerIndex": 1,
-      "explanation": "Aliterația constă în repetarea unei consoane pentru a crea un efect sonor imitativ (aici, sunetul vântului)."
-    },
-    {
-      "question": "Propoziția „Ea **este** profesoară” conține un verb:",
-      "choices": ["Predicativ", "Copulativ", "Auxiliar", "Impersonal"],
-      "answerIndex": 1,
-      "explanation": "Verbul „a fi” nu are sens de sine stătător (nu înseamnă „a exista”), ci face legătura cu numele predicativ „profesoară”, fiind copulativ."
-    },
-    {
-      "question": "În enunțul „Am ajuns **înaintea** colegilor”, cuvântul evidențiat este:",
-      "choices": ["Adverb", "Prepoziție specifică genitivului", "Prepoziție specifică dativului", "Substantiv"],
-      "answerIndex": 1,
-      "explanation": "„Înaintea” este o prepoziție provenită din adverb care cere cazul Genitiv (înaintea cui? -> a colegilor)."
-    },
-    {
-      "question": "Care este forma corectă de plural pentru substantivul „aragaz”?",
-      "choices": ["Aragaze", "Aragazuri"],
-      "answerIndex": 1,
-      "explanation": "Conform normelor actuale (DOOM), pluralul corect al substantivului neutru „aragaz” este „aragazuri”."
-    },
-    {
-      "question": "În fraza „Nu vorbește, **nici** nu cântă”, cuvântul „nici” este:",
-      "choices": ["Adverb de negație", "Conjuncție coordonatoare copulativă", "Conjuncție coordonatoare adversativă", "Prepoziție"],
-      "answerIndex": 1,
-      "explanation": "„Nici” leagă două propoziții de același fel (negative), având rol de conjuncție copulativă."
-    },
-    {
-      "question": "Cuvintele „**cefalee**” (durere de cap) sau „**morfem**” fac parte din:",
-      "choices": ["Limbajul familiar", "Argou", "Jargon (limbaj specializat)", "Limbajul popular"],
+      "question": "În enunțul „Și-a spus **oful**”, cuvântul evidențiat s-a format prin conversiune din: [Sursa 221]",
+      "choices": ["Verb", "Adjectiv", "Interjecție", "Adverb"],
       "answerIndex": 2,
-      "explanation": "Sunt termeni tehnici specifici unor domenii (medicină, lingvistică), încadrându-se în jargon."
+      "explanation": "Interjecția „of” a devenit substantiv prin articulare („oful”), proces numit conversiune."
     },
     {
-      "question": "În versurile „Argintu **mușcă** / Iarba...” („Luna” - Șt. A. Doinaș), figura de stil este:",
-      "choices": ["Epitet", "Personificare", "Comparație", "Hiperbolă"],
+      "question": "Propoziția „Afară **plouă**” are subiect: [Sursa 200]",
+      "choices": ["Exprimat", "Inclus", "Subînțeles", "Nu are subiect"],
+      "answerIndex": 3,
+      "explanation": "Verbele care exprimă fenomene meteorologice (plouă, ninge, tună) sunt impersonale și unipersonale prin formă; ele nu au subiect."
+    },
+    {
+      "question": "Conform regulii de conjugare, forma corectă a verbului „a crea” la indicativ prezent, persoana a III-a singular este: [Sursa 61]",
+      "choices": ["El crează", "El creează", "El creiază", "El crea"],
       "answerIndex": 1,
-      "explanation": "Atribuirea unei acțiuni specifice unei ființe vii („mușcă”) unui element neînsuflețit („argintul”/lumina lunii) este o personificare."
+      "explanation": "Verbul „a crea” se conjugă păstrând rădăcina „cre-” + terminația „-ează”. Deci: „el creează” (doi 'e')."
     },
     {
-      "question": "Grupul de sunete din cuvântul „**toam**-nă” (oa) este un:",
-      "choices": ["Hiat", "Diftong", "Triftong", "Nu formează grup vocalic"],
+      "question": "Rima în care se potrivesc doar vocalele de la sfârșitul versurilor, consoanele fiind diferite (ex: „creștet” – „veșted”), se numește: [Sursa 211]",
+      "choices": ["Rimă albă", "Rimă imperfectă (asonanță)", "Monorimă", "Rimă încrucișată"],
       "answerIndex": 1,
-      "explanation": "Vocala 'a' și semivocala 'o' sunt pronunțate în aceeași silabă, formând un diftong."
+      "explanation": "Potrivirea parțială a sunetelor finale (doar vocalele) constituie o rimă imperfectă."
     },
     {
-      "question": "În propoziția „Succesul este **grație** muncii”, cuvântul evidențiat s-a format prin conversiune din:",
-      "choices": ["Verb", "Adjectiv", "Substantiv", "Adverb"],
+      "question": "Utilizarea termenilor precum „profu'”, „domne” sau căderile de sunete („cuvântu'”) sunt specifice registrului: [Sursa 185]",
+      "choices": ["Solemn", "Standard", "Familiar (colocvial)", "Tehnic"],
       "answerIndex": 2,
-      "explanation": "Prepoziția „grație” (cu sensul de „datorită”) provine din substantivul „grație” (eleganță/iertare)."
+      "explanation": "Registrul familiar se caracterizează prin relaxarea regulilor, termeni populari și pronunție neglijentă."
     },
     {
-      "question": "Versurile fără rimă, dar care păstrează ritmul și măsura, se numesc:",
-      "choices": ["Versuri libere", "Versuri albe", "Distih", "Monorimă"],
+      "question": "În enunțul „Mă **cheamă** Matei”, verbul este: [Sursa 78]",
+      "choices": ["Personal", "Impersonal", "Reflexiv propriu-zis", "Auxiliar"],
       "answerIndex": 1,
-      "explanation": "Versul alb respectă metrica clasică (ritm, măsură), dar nu are rimă, spre deosebire de versul liber care nu respectă nicio constrângere."
+      "explanation": "În această construcție, verbul nu are un subiect care face acțiunea (cine cheamă?), fiind considerat impersonal din punct de vedere semantic."
     },
     {
-      "question": "Alege varianta corectă: „Serviciul de **reparații** televizoare.” / „Serviciul de **reparări** televizoare.”",
-      "choices": ["Reparații", "Reparări"],
-      "answerIndex": 0,
-      "explanation": "Forma consacrată pentru pluralul substantivului care denumește atelierul/acțiunea este „reparații”."
-    },
-    {
-      "question": "În enunțul „M-am întâlnit cu **un** coleg”, cuvântul „un” este:",
-      "choices": ["Numeral cardinal", "Articol nehotărât", "Pronume nehotărât", "Adjectiv"],
-      "answerIndex": 1,
-      "explanation": "Însoțește un substantiv fără a insista pe număr (nu îl opune lui „doi”), având valoare de articol nehotărât."
-    },
-    {
-      "question": "Ce rol are cratima în structura „**show-ul**”?",
-      "choices": ["Leagă două cuvinte diferite", "Marchează elidarea unei vocale", "Leagă articolul hotărât de un împrumut neadaptat", "Este opțională"],
+      "question": "Figura de stil din versul „Și vodă-i un **munte**” (G. Coșbuc) este: [Sursa 174]",
+      "choices": ["Epitet", "Personificare", "Hiperbolă", "Antiteză"],
       "answerIndex": 2,
-      "explanation": "La împrumuturile a căror finală pronunțată diferă de cea scrisă (show [șou]), articolul hotărât se leagă prin cratimă."
+      "explanation": "Exagerarea dimensiunilor personajului pentru a-i evidenția măreția este o hiperbolă."
     },
     {
-      "question": "În propoziția „El **se** spală”, pronumele „se” este în cazul:",
-      "choices": ["Dativ", "Acuzativ", "Nominativ", "Genitiv"],
+      "question": "Forma ortografică corectă a condiționalului optativ, persoana I singular, este: [Sursa 15]",
+      "choices": ["Ași dori", "Aș dori", "A-și dori", "Aș dorii"],
       "answerIndex": 1,
-      "explanation": "Răspunde la întrebarea „pe cine spală?” -> „pe sine” (se). Este un pronume reflexiv în cazul Acuzativ."
+      "explanation": "Auxiliarul condiționalului pentru persoana I este „aș”. Forma „ași” este greșită."
     },
     {
-      "question": "Cuvântul „**picior**” în expresia „la piciorul podului” este folosit cu sens:",
-      "choices": ["Propriu de bază", "Propriu secundar", "Figurat (metaforic)", "Argotic"],
+      "question": "În enunțul „**Lunea** merg la școală”, cuvântul evidențiat este: [Sursa 229]",
+      "choices": ["Substantiv", "Adverb de timp", "Adjectiv", "Numeral"],
       "answerIndex": 1,
-      "explanation": "Sensul propriu secundar apare prin asemănare de formă sau poziție cu sensul de bază, fără a fi o figură de stil poetică."
+      "explanation": "Deși provine dintr-un substantiv, aici indică timpul și repetabilitatea acțiunii, devenind adverb prin conversiune."
     },
     {
-      "question": "În fraza „Mergem la munte, **dar** nu schiem”, raportul de coordonare este:",
-      "choices": ["Copulativ", "Adversativ", "Disjunctiv", "Concluziv"],
+      "question": "În enunțul „Eu **mă** laud”, pronumele „mă” este: [Sursa 64]",
+      "choices": ["Personal", "Reflexiv", "Posesiv", "Nehotărât"],
       "answerIndex": 1,
-      "explanation": "Conjuncția „dar” introduce o opoziție față de propoziția anterioară, stabilind un raport adversativ."
+      "explanation": "Subiectul (Eu) face acțiunea și tot el o suportă (pe sine). Persoana subiectului coincide cu a pronumelui -> Reflexiv."
     },
     {
-      "question": "Valoarea morfologică a cuvântului „**rănit**” în enunțul „Un rănit a fost transportat la spital” este:",
-      "choices": ["Verb la participiu", "Adjectiv", "Substantiv", "Adverb"],
+      "question": "Mărcile lexico-gramaticale ale prezenței **eului liric** într-un text sunt: [Sursa 41]",
+      "choices": ["Verbe și pronume la persoana a III-a", "Verbe și pronume la persoana I", "Dialogul", "Didascaliile"],
+      "answerIndex": 1,
+      "explanation": "Persoana I (singular sau plural) la verbe și pronume indică subiectivitatea și prezența directă a vocii lirice."
+    },
+    {
+      "question": "Prepoziția „grație” (sinonimă cu „datorită”) cere cazul: [Sursa 93]",
+      "choices": ["Acuzativ", "Genitiv", "Dativ", "Nominativ"],
       "answerIndex": 2,
-      "explanation": "Prin articulare cu „un”, participiul „rănit” a devenit substantiv (denumește persoana)."
+      "explanation": "Prepozițiile „grație”, „mulțumită”, „datorită” se construiesc întotdeauna cu cazul Dativ."
     },
     {
-      "question": "În versul „Și vodă-i un **munte**” („Pașa Hassan” - G. Coșbuc), termenul „munte” este o metaforă hiperbolizată care sugerează:",
-      "choices": ["Mărimea fizică a domnitorului", "Forța copleșitoare și măreția voievodului", "Faptul că stătea pe un munte", "Indiferența personajului"],
+      "question": "În cuvântul „cheamă”, grupul „che” notează: [Sursa 169]",
+      "choices": ["Două sunete [k] și [e]", "Un singur sunet [k']", "Trei sunete", "Niciun sunet"],
       "answerIndex": 1,
-      "explanation": "Hiperbola „vodă-i un munte” exagerează dimensiunile pentru a sugera forța morală și statura impunătoare a lui Mihai Viteazul în fața dușmanului."
+      "explanation": "Deoarece este urmat de o vocală („a”) în aceeași silabă, grupul „che” notează doar consoana [k']. Litera „e” nu se aude ca vocală distinctă."
+    },
+    {
+      "question": "Cuvintele „îmbuna”, „bunătate”, „bunăstare” formează împreună cu „bun”: [Sursa 94]",
+      "choices": ["Un câmp lexical", "O familie lexicală", "O serie de sinonime", "O serie de omonime"],
+      "answerIndex": 1,
+      "explanation": "Toate sunt formate de la aceeași rădăcină („bun”) prin derivare sau compunere, constituind familia lexicală."
+    },
+    {
+      "question": "Indicațiile scenice scrise între paranteze în interiorul replicilor se numesc: [Sursa 214]",
+      "choices": ["Didascalii externe", "Didascalii interne", "Dialog", "Monolog"],
+      "answerIndex": 1,
+      "explanation": "Didascaliile care apar în corpul textului dialogat, referitoare la jocul actorilor sau ton, sunt indicații interne."
     }
   ];
 
