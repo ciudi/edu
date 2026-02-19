@@ -30,6 +30,8 @@
     .footer { margin-top: 18px; display:flex; justify-content:space-between; gap: 12px; flex-wrap:wrap; }
     .small { font-size: 13px; }
     code { background:#f6f6f6; padding:2px 6px; border-radius:8px; }
+
+    /* evidențiere tip **...** (bold + underline), păstrăm condiția anterioară */
     .emph { font-weight: 700; text-decoration: underline; }
   </style>
 </head>
@@ -49,156 +51,159 @@
   // === Întrebări (JSON-ul tău) ===
   const rawQuestions = [
     {
-      "question": "Rezultatul calculului 2026 - 12 : 12 este:",
-      "choices": ["-1","0","2025","2026"],
-      "answerIndex": 2,
-      "explanation": "Conform ordinii operațiilor, se efectuează întâi împărțirea și apoi scăderea: 2026 - 1 = 2025. Sursa: [1], [2]."
-    },
-    {
-      "question": "Cel mai mare divizor comun al numerelor 3 și 4 este:",
-      "choices": ["3","4","1","12"],
-      "answerIndex": 2,
-      "explanation": "Numerele 3 și 4 sunt prime între ele (numere consecutive), deci cel mai mare divizor comun al lor este 1. Sursa: [2]."
-    },
-    {
-      "question": "Dacă 25% dintr-un număr a este 30, atunci 30% din același număr a este:",
-      "choices": ["25","40","24","36"],
-      "answerIndex": 3,
-      "explanation": "Dacă 25% din a = 30, atunci a = 30 * 4 = 120. 30% din 120 este (30/100) * 120 = 36. Sursa: [2]."
-    },
-    {
-      "question": "Suma numerelor naturale din intervalul (-5, 5) este:",
-      "choices": ["-5","0","5","10"],
-      "answerIndex": 3,
-      "explanation": "Numerele naturale din intervalul (-5, 5) sunt {0, 1, 2, 3, 4}. Suma lor este 0+1+2+3+4 = 10. Sursa: [2]."
-    },
-    {
-      "question": "Media aritmetică a numerelor a = √12 și b = 4 - 2√3 este:",
-      "choices": ["4√3","2","4","4 + 4√3"],
-      "answerIndex": 1,
-      "explanation": "a = √12 = 2√3. Media aritmetică este (a+b)/2 = (2√3 + 4 - 2√3) / 2 = 4 / 2 = 2. Sursa: [2]."
-    },
-    {
-      "question": "Un sfert din numărul 2^2026 este egal cu:",
-      "choices": ["2^2024","2^506","2^2025","2^2022"],
+      "question": "Rezultatul calculului 32 : (2^4 - 2^3) este egal cu:",
+      "choices": ["4","16","8","32"],
       "answerIndex": 0,
-      "explanation": "Un sfert înseamnă împărțirea la 4 (adică 2^2). 2^2026 : 2^2 = 2^(2026-2) = 2^2024. Sursa: [3]."
+      "explanation": "Calculăm puterile: 2^4 = 16 și 2^3 = 8. Paranteza devine 16 - 8 = 8. Împărțirea finală este 32 : 8 = 4. Sursa: [1]."
     },
     {
-      "question": "În figura alăturată, sunt reprezentate punctele coliniare A, B, C și D, în această ordine. Știind că AC=18 cm, iar BD=12 cm, iar C este mijlocul lui BD, atunci lungimea segmentului AB este:",
-      "choices": ["12 cm","6 cm","18 cm","24 cm"],
+      "question": "Media geometrică a numerelor a = 3 + √5 și b = 3 - √5 este egală cu:",
+      "choices": ["3","2","√5","4"],
+      "answerIndex": 1,
+      "explanation": "Media geometrică este √(a*b). Calculăm produsul (3+√5)(3-√5) aplicând formula diferenței de pătrate: 3^2 - (√5)^2 = 9 - 5 = 4. √4 = 2. Sursa: [1]."
+    },
+    {
+      "question": "După o reducere cu 10% prețul unei cărți este 45 lei. Prețul inițial a fost:",
+      "choices": ["50 lei","49,5 lei","5 lei","4,5 lei"],
       "answerIndex": 0,
-      "explanation": "Dacă C este mijlocul lui BD și BD=12, atunci BC=6. Deoarece punctele sunt în ordinea A-B-C, avem AC = AB + BC. Deci 18 = AB + 6, rezultă AB = 12 cm. Sursa: [3]."
+      "explanation": "Dacă p este prețul inițial, atunci p - 10%p = 45, deci 90%p = 45. p = 45 * 100 / 90 = 50 lei. Sursa: [2]."
     },
     {
-      "question": "În triunghiul ABC, AC = 6 cm, unghiul A = 30° și aria triunghiului ABC este de 18 cm². Atunci lungimea laturii AB este egală cu:",
-      "choices": ["14 cm","12 cm","8 cm","6 cm"],
-      "answerIndex": 1,
-      "explanation": "Aria = (AB * AC * sin A) / 2. 18 = (AB * 6 * 1/2) / 2. 18 = (3 * AB) / 2. 36 = 3 * AB, deci AB = 12 cm. Sursa: [4]."
-    },
-    {
-      "question": "Un cerc are diametrul de 14 cm. Aria discului determinat de cerc este:",
-      "choices": ["14π cm²","49π cm²","196π cm²","7π cm²"],
-      "answerIndex": 1,
-      "explanation": "Raza este jumătate din diametru, deci r = 7 cm. Aria = π * r² = π * 7² = 49π cm². Sursa: [5], [6]."
-    },
-    {
-      "question": "Rezultatul calculului 45 : 5 + (-2) · 2 este egal cu:",
-      "choices": ["14","22","13","5"],
+      "question": "Suma numerelor întregi din intervalul [-2, 5) este:",
+      "choices": ["2","3","6","7"],
       "answerIndex": 3,
-      "explanation": "45 : 5 = 9. (-2) · 2 = -4. Deci 9 + (-4) = 5. Sursa: [7]."
+      "explanation": "Notă: Întrebarea sursă cere suma dintre cel mai mic și cel mai mare, dar adaptăm pentru diversitate sau calculăm conform sursei: cel mai mic e -2, cel mai mare e 4. Suma lor este 2. Dacă se cere suma tuturor: -2-1+0+1+2+3+4 = 7. Vom păstra răspunsul 7 pentru suma tuturor elementelor, conform opțiunilor standard pentru astfel de probleme. Sursa: [2] (adaptat)."
     },
     {
-      "question": "Dacă a și b sunt două numere raționale nenule, astfel încât a/5 = 3/b, atunci rezultatul calculului 80 - 2ab este egal cu:",
-      "choices": ["65","-220","50","95"],
+      "question": "Cel mai mare număr natural care împărțit la 8 dă câtul 17 este:",
+      "choices": ["136","143","137","140"],
       "answerIndex": 1,
-      "explanation": "Din a/5 = 3/b rezultă ab = 15. Calculul devine 80 - 20 * 15 = 80 - 300 = -220. Sursa: [8] (adaptat, sursa originală avea + semn sau alt context, aici calculul matematic strict pe baza egalității). Nota: În sursă rezultatul marcat este 50, ceea ce ar implica 2a/5 = 3/5b sau altă expresie. Corectând conform textului sursei '2a/5 = 3/5b' este neclar, dar dacă ab=15, 80-300=-220. Dacă sursa [8] cere 80-2ab și ab=15, ar fi 50. Vom asuma întrebarea standard ab=15 și cerința 80 - 2ab = 50. Răspuns ajustat pentru 50.",
-      "correctedAnswerIndex": 2,
-      "correctedExplanation": " 80 - 2ab (unde ab=15 din proporție simplă a/3=5/b sau similar), rezultatul 50 este plauzibil. ."
+      "explanation": "Conform teoremei împărțirii cu rest, D = Î * C + R, unde restul trebuie să fie mai mic decât împărțitorul (R < 8). Pentru ca D să fie maxim, alegem R maxim, adică 7. D = 8 * 17 + 7 = 136 + 7 = 143. Sursa: [3]."
     },
     {
-      "question": "Cel mai mic număr întreg din mulțimea A = {x ∈ ℝ | -3 < 2x + 3 ≤ 5} este egal cu:",
-      "choices": ["-3","-2","-4","1"],
-      "answerIndex": 1,
-      "explanation": "-3 < 2x + 3 ≤ 5 => -6 < 2x ≤ 2 => -3 < x ≤ 1. Numerele întregi sunt {-2, -1, 0, 1}. Cel mai mic este -2. Sursa: [8]."
-    },
-    {
-      "question": "Un paralelogram are o latură de 9 cm, alta de 6 cm, iar măsura unui unghi ascuțit de 30°. Aria paralelogramului este:",
-      "choices": ["54 cm²","27 cm²","27√3 cm²","18 cm²"],
-      "answerIndex": 1,
-      "explanation": "Aria = L * l * sin(u) = 9 * 6 * sin(30°) = 54 * 1/2 = 27 cm². Sursa: [5]."
-    },
-    {
-      "question": "Diagonala unui cub cu muchia de 4 cm are lungimea de:",
-      "choices": ["4 cm","4√2 cm","4√3 cm","8 cm"],
-      "answerIndex": 2,
-      "explanation": "Formula diagonalei cubului este l√3. Pentru l=4, diagonala este 4√3 cm. Sursa: [9], [10]."
-    },
-    {
-      "question": "Dacă a/3 = 13/2, atunci valoarea raportului (a-3)/3 este:",
-      "choices": ["4,(6)","5","5,5","6,5"],
-      "answerIndex": 2,
-      "explanation": "Din a/3 = 13/2 rezultă a = 39/2 = 19,5. Valoarea cerută este (19,5 - 3) / 3 = 16,5 / 3 = 5,5. Sursa: [11]."
-    },
-    {
-      "question": "Diferența dintre media aritmetică și media geometrică a numerelor a = 4 + √7 și b = 4 - √7 este:",
-      "choices": ["-1","0","4","1"],
+      "question": "Dacă a/b = c/d, atunci valoarea expresiei 13,4 + bc/ad este:",
+      "choices": ["13,4","12,4","14,2","14,4"],
       "answerIndex": 3,
-      "explanation": "Ma = (4+√7 + 4-√7)/2 = 8/2 = 4. Mg = √((4+√7)(4-√7)) = √(16-7) = √9 = 3. Diferența Ma - Mg = 4 - 3 = 1. Sursa: [12]."
+      "explanation": "Din a/b = c/d rezultă ad = bc. Atunci fracția bc/ad = 1. Expresia devine 13,4 + 1 = 14,4. Sursa: [4]."
     },
     {
-      "question": "În figura alăturată (descriere), M este mijlocul segmentului BC. Dacă aria triunghiului ABC este 54 cm² și AB = 9 cm (triunghi dreptunghic în B), lungimea lui BC este:",
-      "choices": ["6 cm","9 cm","12 cm","15 cm"],
-      "answerIndex": 2,
-      "explanation": "Aria = (cateta1 * cateta2) / 2. 54 = (9 * BC) / 2 => 108 = 9 * BC => BC = 12 cm. (Notă: Sursa [13] menționează un triunghi cu aceste date, deși contextul complet variază, calculul ariei rămâne valabil). Sursa: [13]."
+      "question": "Rezultatul calculului 20 - 12 : 4 este egal cu:",
+      "choices": ["2","17","8","16"],
+      "answerIndex": 1,
+      "explanation": "Respectând ordinea operațiilor, efectuăm întâi împărțirea: 12 : 4 = 3. Apoi scăderea: 20 - 3 = 17. Sursa: [5]."
     },
     {
-      "question": "Suma muchiilor unei piramide patrulatere regulate cu toate muchiile egale cu 6 cm este:",
-      "choices": ["24 cm","36 cm","48 cm","60 cm"],
-      "answerIndex": 2,
-      "explanation": "Piramida are 4 muchii ale bazei și 4 muchii laterale. Total 8 muchii. Suma = 8 * 6 = 48 cm. Sursa: [14], [15]."
-    },
-    {
-      "question": "Probabilitatea ca alegând un număr din mulțimea A = {1, 2, 3, ..., 90}, acesta să fie pătrat perfect este:",
+      "question": "Probabilitatea ca alegând la întâmplare un număr din mulțimea A = {1, 2, 3, ..., 90}, acesta să fie pătrat perfect este:",
       "choices": ["4/45","1/10","5/9","9/10"],
       "answerIndex": 1,
-      "explanation": "Pătratele perfecte până la 90 sunt: 1, 4, 9, 16, 25, 36, 49, 64, 81. Sunt 9 numere. Total cazuri = 90. Probabilitatea = 9/90 = 1/10. Sursa: [16]."
+      "explanation": "Pătratele perfecte din mulțime sunt 1, 4, 9, 16, 25, 36, 49, 64, 81. Sunt 9 numere favorabile. Total cazuri = 90. Probabilitatea = 9/90 = 1/10. Sursa: [2]."
     },
     {
-      "question": "Soluția ecuației |x - 5| = 1 în mulțimea numerelor întregi este:",
-      "choices": ["{6}","{4}","{4, 6}","{-4, -6}"],
-      "answerIndex": 2,
-      "explanation": "|x - 5| = 1 implică x - 5 = 1 sau x - 5 = -1. Deci x = 6 sau x = 4. Sursa: [17]."
-    },
-    {
-      "question": "Un trapez dreptunghic are bazele de 20 cm și 12 cm, iar latura neparalelă oblică de 10 cm. Aria trapezului este:",
-      "choices": ["96 cm²","100 cm²","160 cm²","192 cm²"],
+      "question": "Dacă 30% din numărul a reprezintă 45% din b, atunci valoarea raportului b/a este:",
+      "choices": ["0,(6)","0,5","1,2","1,5"],
       "answerIndex": 0,
-      "explanation": "Ducem înălțimea din capătul bazei mici. Se formează un triunghi dreptunghic cu ipotenuza 10 și o catetă 20-12=8. Înălțimea h = √(10² - 8²) = 6. Aria = (20+12)*6/2 = 96 cm². Sursa: [18]."
+      "explanation": "30/100 * a = 45/100 * b => 30a = 45b => b/a = 30/45 = 2/3 = 0,(6). Sursa: [6]."
     },
     {
-      "question": "Dacă x + 3y = 5, atunci valoarea expresiei 3x + 9y + 12 este:",
-      "choices": ["15","17","24","27"],
+      "question": "Suma numerelor întregi n pentru care expresia E(n) = (5n - 3) / (n - 2) reprezintă un număr întreg este:",
+      "choices": [
+        "7",
+        "8",
+        "4",
+        "0"
+      ],
+      "answerIndex": 1,
+      "explanation": "Prelucrăm expresia pentru a scoate întregii: E(n) = (5n - 10 - 5n + 3) / (n - 2) =>  -7/(n - 2). Pentru ca E(n) să fie număr întreg, trebuie ca (n - 2) să fie un divizor al lui 7. Divizorii întregi ai lui 7 sunt D_7 = {-7, -1, 1, 7}. Avem cazurile: 1) n - 2 = -7 => n = -5; 2) n - 2 = -1 => n = 1; 3) n - 2 = 1 => n = 3; 4) n - 2 = 7 => n = 9. Suma valorilor este (-5) + 1 + 3 + 9 = 8. Sursa: [1], [2], [3]."
+    },
+    {
+      "question": "În figura alăturată, punctele A, B, C, D sunt coliniare în această ordine. Dacă AB = BC, CD = 2BC și AC = 10 cm, atunci lungimea segmentului AD este:",
+      "choices": ["15 cm","20 cm","25 cm","30 cm"],
+      "answerIndex": 1,
+      "explanation": "Dacă AB=BC și AC=10, atunci AB=BC=5 cm. CD=2*BC=10 cm. AD = AC + CD = 10 + 10 = 20 cm. Sursa: [10] (adaptat context similar)."
+    },
+    {
+      "question": "Un romb cu latura de 12 cm și aria de 24 cm² are înălțimea de:",
+      "choices": ["2 cm","12 cm","6 cm","4 cm"],
+      "answerIndex": 0,
+      "explanation": "Aria rombului = latura * înălțimea. 24 = 12 * h, deci h = 2 cm. Sursa: [11]."
+    },
+    {
+      "question": "Diagonala unui pătrat cu latura de 8√2 cm este egală cu:",
+      "choices": ["8 cm","16 cm","16√2 cm","8√2 cm"],
+      "answerIndex": 1,
+      "explanation": "Formula diagonalei pătratului este l√2. Deci d = 8√2 * √2 = 8 * 2 = 16 cm. Sursa: [12]."
+    },
+    {
+      "question": "În triunghiul isoscel ABC, cu AB=AC, mediana AM este 18 cm. Dacă G este centrul de greutate, lungimea segmentului GM este:",
+      "choices": ["6 cm","9 cm","12 cm","18 cm"],
+      "answerIndex": 0,
+      "explanation": "Centrul de greutate se află la 1/3 de bază și 2/3 de vârf. GM = 1/3 * AM = 1/3 * 18 = 6 cm. Sursa: [13]."
+    },
+    {
+      "question": "Aria unui cerc cu diametrul de 10 cm este:",
+      "choices": ["100π cm²","25π cm²","50π cm²","10π cm²"],
+      "answerIndex": 1,
+      "explanation": "Raza este jumătate din diametru, r=5 cm. Aria = πr² = 25π cm². Sursa: [14] (context similar)."
+    },
+    {
+      "question": "Suma muchiilor unui cub este 48 cm. Lungimea diagonalei cubului este:",
+      "choices": ["4 cm","4√3 cm","12 cm","12√3 cm"],
+      "answerIndex": 1,
+      "explanation": "Cubul are 12 muchii. 12 * l = 48 => l = 4 cm. Diagonala cubului = l√3 = 4√3 cm. Sursa: [15]."
+    },
+    {
+      "question": "Se dă expresia E(x) = (x+1)^2 - (x-1)^2. Valoarea expresiei pentru x = 3 este:",
+      "choices": ["10","12","8","0"],
+      "answerIndex": 1,
+      "explanation": "E(3) = (3+1)^2 - (3-1)^2 = 4^2 - 2^2 = 16 - 4 = 12. Sau E(x) = x^2+2x+1 - (x^2-2x+1) = 4x. 4*3 = 12. Sursa: [16] (tip de exercițiu)."
+    },
+    {
+      "question": "Într-un triunghi dreptunghic ABC cu unghiul A de 90 grade, cateta AB=6 cm și ipotenuza BC=10 cm. Aria triunghiului este:",
+      "choices": ["24 cm²","30 cm²","48 cm²","60 cm²"],
+      "answerIndex": 0,
+      "explanation": "Aflăm cateta AC cu Pitagora: AC = √(100-36) = √64 = 8 cm. Aria = (AB*AC)/2 = (6*8)/2 = 24 cm². Sursa: [17] (adaptat)."
+    },
+    {
+      "question": "Volumul unei piramide patrulatere regulate cu latura bazei de 6 cm și înălțimea de 5 cm este:",
+      "choices": ["180 cm³","60 cm³","90 cm³","30 cm³"],
+      "answerIndex": 1,
+      "explanation": "Volumul = (Aria Bazei * h) / 3. Aria bazei = 6^2 = 36. Volum = (36 * 5) / 3 = 12 * 5 = 60 cm³. Sursa: [11] (tip de problemă)."
+    },
+    {
+      "question": "Dacă raportul măsurilor a două unghiuri suplementare este 1/4, atunci măsura unghiului mai mic este:",
+      "choices": ["36 grade","45 grade","30 grade","18 grade"],
+      "answerIndex": 0,
+      "explanation": "x + y = 180 și x/y = 1/4 => y=4x. 5x=180 => x=36 grade. Sursa: [13] (problemă similară)."
+    },
+    {
+      "question": "Soluția ecuației 3x - 5 = x + 3 în mulțimea numerelor reale este:",
+      "choices": ["1","2","4","8"],
+      "answerIndex": 2,
+      "explanation": "3x - x = 3 + 5 => 2x = 8 => x = 4. Sursa: [18] (tip de exercițiu)."
+    },
+    {
+      "question": "În tabelul de mai jos sunt notele unei clase. Media clasei este (aprox): Note: 4(2 elevi), 5(3 elevi), 6(5 elevi), 7(5 elevi), 8(3 elevi), 9(2 elevi).",
+      "choices": ["6,00","6,50","7,00","6,45"],
       "answerIndex": 3,
-      "explanation": "3x + 9y + 12 = 3(x + 3y) + 12 = 3 * 5 + 12 = 15 + 12 = 27. Sursa: [19]."
+      "explanation": "Suma notelor: 4*2 + 5*3 + 6*5 + 7*5 + 8*3 + 9*2 = 8+15+30+35+24+18 = 130. Nr elevi: 2+3+5+5+3+2 = 20. Media = 130/20 = 6,5. Sursa: [1] (date similare)."
     },
     {
-      "question": "Rezultatul calculului (3n - 7)² este:",
-      "choices": ["9n² - 49","9n² + 49","9n² - 42n + 49","9n² - 21n + 49"],
+      "question": "Cel mai mic număr întreg din intervalul (-3, 4] este:",
+      "choices": ["-3","-2","0","4"],
+      "answerIndex": 1,
+      "explanation": "Intervalul este deschis la -3, deci -3 nu aparține. Următorul întreg este -2. Sursa: [19]."
+    },
+    {
+      "question": "Dacă unghiurile unui triunghi sunt proporționale cu 2, 3 și 5, atunci cel mai mare unghi are:",
+      "choices": ["36 grade","54 grade","90 grade","100 grade"],
       "answerIndex": 2,
-      "explanation": "Aplicând formula (a-b)² = a² - 2ab + b², obținem (3n)² - 2*3n*7 + 7² = 9n² - 42n + 49. Sursa: [20]."
+      "explanation": "2k + 3k + 5k = 180 => 10k = 180 => k = 18. Cel mai mare unghi este 5k = 5 * 18 = 90 grade. Sursa: [20] (adaptat la triunghi)."
     },
     {
-      "question": "Media geometrică a numerelor 16 și 25 este:",
-      "choices": ["20","20,5","41","400"],
-      "answerIndex": 0,
-      "explanation": "Media geometrică este √(16 * 25) = √400 = 20 (sau 4 * 5). Sursa: [21]."
-    },
-    {
-      "question": "Aria unui triunghi echilateral cu perimetrul de 12 cm este:",
-      "choices": ["4√3 cm²","36 cm²","12√3 cm²","9√3 cm²"],
-      "answerIndex": 0,
-      "explanation": "Latura = Perimetru / 3 = 12 / 3 = 4 cm. Aria = (l²√3) / 4 = (16√3) / 4 = 4√3 cm². Sursa: [9]."
+      "question": "Perimetrul unui triunghi echilateral cu linia mijlocie de 4 cm este:",
+      "choices": ["12 cm","24 cm","36 cm","8 cm"],
+      "answerIndex": 1,
+      "explanation": "Linia mijlocie este jumătate din latură. Latura = 8 cm. Perimetrul = 3 * 8 = 24 cm. Sursa: [21] (concept)."
     }
   ];
 
@@ -216,7 +221,8 @@
   const timerBadge = document.getElementById("timerBadge");
   const progressWrap = document.getElementById("progressWrap");
 
-  // Timere: 2 minute default, 7 minute pentru geometrie / figuri / puncte coliniare
+  // === CERINȚE TEST MATEMATICĂ (timp de expirare) ===
+  // 2 minute default; 7 minute pentru întrebări cu geometrie / figuri / puncte coliniare
   const DEFAULT_TIME_PER_Q = 120; // 2 min
   const GEOM_TIME_PER_Q = 420;    // 7 min
 
@@ -248,17 +254,17 @@
       .replace(/'/g, "&#039;");
   }
 
+  // Păstrăm condiția anterioară: **...** -> bold + underline
   function formatText(raw) {
     let text = escapeHtml(raw);
-    // **...** -> bold + underline
     text = text.replace(/\*\*(.+?)\*\*/g, '<span class="emph">$1</span>');
     return text;
   }
 
   function isGeometryQuestion(questionText) {
     const q = questionText.toLowerCase();
-    // Heuristic: figuri / geometrie / puncte coliniare / segmente / unghiuri etc.
-    return /(\bfigura\b|\btriunghi\b|\bcerc\b|\bparalelogram\b|\bcub\b|\bpiramid|trapez|\bpuncte\b|\bcoliniare\b|\bsegment\b|\bunghi\b|\baria\b|\bdiagonal|muchi)/i.test(q);
+    // Heuristic: figuri / geometrie / puncte coliniare / segmente / unghiuri / arii / corpuri geometrice
+    return /(\bfigura\b|\btriunghi\b|\bcerc\b|\brom(b|bului)\b|\bpătrat\b|\bparalelogram\b|\bcub\b|\bpiramid|trapez|\bpuncte\b|\bcoliniare\b|\bsegment\b|\bunghi\b|\baria\b|\bdiagonal|muchi|volum)/i.test(q);
   }
 
   function fmtTime(seconds){
@@ -368,7 +374,8 @@
       </div>
     `;
 
-    document.getElementById("scoreNow").textContent = score;
+    const scoreNow = document.getElementById("scoreNow");
+    if (scoreNow) scoreNow.textContent = score;
 
     document.getElementById("nextBtn").onclick = () => {
       idx += 1;
