@@ -30,9 +30,6 @@
     .footer { margin-top: 18px; display:flex; justify-content:space-between; gap: 12px; flex-wrap:wrap; }
     .small { font-size: 13px; }
     code { background:#f6f6f6; padding:2px 6px; border-radius:8px; }
-
-    /* evidențiere tip **...** (bold + underline), păstrăm condiția anterioară */
-    .emph { font-weight: 700; text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -41,7 +38,7 @@
 
 <div class="topbar">
   <div class="badge" id="qCounter">Întrebarea 1 / 1</div>
-  <div class="badge timer" id="timerBadge">⏳ Timp rămas: <span id="timeLeft">02:00</span></div>
+  <div class="badge timer" id="timerBadge">⏳ Timp rămas: <span id="timeLeft">05:00</span></div>
 </div>
 <div class="progress" id="progressWrap"><div id="timeBar"></div></div>
 
@@ -49,171 +46,33 @@
 
 <script>
   // === Întrebări (JSON-ul tău) ===
-  const rawQuestions = [
-    {
-      "question": "Rezultatul calculului 32 : (2^4 - 2^3) este egal cu:",
-      "choices": ["4","16","8","32"],
-      "answerIndex": 0,
-      "explanation": "Calculăm puterile: 2^4 = 16 și 2^3 = 8. Paranteza devine 16 - 8 = 8. Împărțirea finală este 32 : 8 = 4. Sursa: [1]."
-    },
-    {
-      "question": "Media geometrică a numerelor a = 3 + √5 și b = 3 - √5 este egală cu:",
-      "choices": ["3","2","√5","4"],
-      "answerIndex": 1,
-      "explanation": "Media geometrică este √(a*b). Calculăm produsul (3+√5)(3-√5) aplicând formula diferenței de pătrate: 3^2 - (√5)^2 = 9 - 5 = 4. √4 = 2. Sursa: [1]."
-    },
-    {
-      "question": "După o reducere cu 10% prețul unei cărți este 45 lei. Prețul inițial a fost:",
-      "choices": ["50 lei","49,5 lei","5 lei","4,5 lei"],
-      "answerIndex": 0,
-      "explanation": "Dacă p este prețul inițial, atunci p - 10%p = 45, deci 90%p = 45. p = 45 * 100 / 90 = 50 lei. Sursa: [2]."
-    },
-    {
-      "question": "Suma numerelor întregi din intervalul [-2, 5) este:",
-      "choices": ["2","3","6","7"],
-      "answerIndex": 3,
-      "explanation": "Notă: Întrebarea sursă cere suma dintre cel mai mic și cel mai mare, dar adaptăm pentru diversitate sau calculăm conform sursei: cel mai mic e -2, cel mai mare e 4. Suma lor este 2. Dacă se cere suma tuturor: -2-1+0+1+2+3+4 = 7. Vom păstra răspunsul 7 pentru suma tuturor elementelor, conform opțiunilor standard pentru astfel de probleme. Sursa: [2] (adaptat)."
-    },
-    {
-      "question": "Cel mai mare număr natural care împărțit la 8 dă câtul 17 este:",
-      "choices": ["136","143","137","140"],
-      "answerIndex": 1,
-      "explanation": "Conform teoremei împărțirii cu rest, D = Î * C + R, unde restul trebuie să fie mai mic decât împărțitorul (R < 8). Pentru ca D să fie maxim, alegem R maxim, adică 7. D = 8 * 17 + 7 = 136 + 7 = 143. Sursa: [3]."
-    },
-    {
-      "question": "Dacă a/b = c/d, atunci valoarea expresiei 13,4 + bc/ad este:",
-      "choices": ["13,4","12,4","14,2","14,4"],
-      "answerIndex": 3,
-      "explanation": "Din a/b = c/d rezultă ad = bc. Atunci fracția bc/ad = 1. Expresia devine 13,4 + 1 = 14,4. Sursa: [4]."
-    },
-    {
-      "question": "Rezultatul calculului 20 - 12 : 4 este egal cu:",
-      "choices": ["2","17","8","16"],
-      "answerIndex": 1,
-      "explanation": "Respectând ordinea operațiilor, efectuăm întâi împărțirea: 12 : 4 = 3. Apoi scăderea: 20 - 3 = 17. Sursa: [5]."
-    },
-    {
-      "question": "Probabilitatea ca alegând la întâmplare un număr din mulțimea A = {1, 2, 3, ..., 90}, acesta să fie pătrat perfect este:",
-      "choices": ["4/45","1/10","5/9","9/10"],
-      "answerIndex": 1,
-      "explanation": "Pătratele perfecte din mulțime sunt 1, 4, 9, 16, 25, 36, 49, 64, 81. Sunt 9 numere favorabile. Total cazuri = 90. Probabilitatea = 9/90 = 1/10. Sursa: [2]."
-    },
-    {
-      "question": "Dacă 30% din numărul a reprezintă 45% din b, atunci valoarea raportului b/a este:",
-      "choices": ["0,(6)","0,5","1,2","1,5"],
-      "answerIndex": 0,
-      "explanation": "30/100 * a = 45/100 * b => 30a = 45b => b/a = 30/45 = 2/3 = 0,(6). Sursa: [6]."
-    },
-    {
-      "question": "Suma numerelor întregi n pentru care expresia E(n) = (5n - 3) / (n - 2) reprezintă un număr întreg este:",
-      "choices": [
-        "7",
-        "8",
-        "4",
-        "0"
-      ],
-      "answerIndex": 1,
-      "explanation": "Prelucrăm expresia pentru a scoate întregii: E(n) = (5n - 10 - 5n + 3) / (n - 2) =>  -7/(n - 2). Pentru ca E(n) să fie număr întreg, trebuie ca (n - 2) să fie un divizor al lui 7. Divizorii întregi ai lui 7 sunt D_7 = {-7, -1, 1, 7}. Avem cazurile: 1) n - 2 = -7 => n = -5; 2) n - 2 = -1 => n = 1; 3) n - 2 = 1 => n = 3; 4) n - 2 = 7 => n = 9. Suma valorilor este (-5) + 1 + 3 + 9 = 8. Sursa: [1], [2], [3]."
-    },
-    {
-      "question": "În figura alăturată, punctele A, B, C, D sunt coliniare în această ordine. Dacă AB = BC, CD = 2BC și AC = 10 cm, atunci lungimea segmentului AD este:",
-      "choices": ["15 cm","20 cm","25 cm","30 cm"],
-      "answerIndex": 1,
-      "explanation": "Dacă AB=BC și AC=10, atunci AB=BC=5 cm. CD=2*BC=10 cm. AD = AC + CD = 10 + 10 = 20 cm. Sursa: [10] (adaptat context similar)."
-    },
-    {
-      "question": "Un romb cu latura de 12 cm și aria de 24 cm² are înălțimea de:",
-      "choices": ["2 cm","12 cm","6 cm","4 cm"],
-      "answerIndex": 0,
-      "explanation": "Aria rombului = latura * înălțimea. 24 = 12 * h, deci h = 2 cm. Sursa: [11]."
-    },
-    {
-      "question": "Diagonala unui pătrat cu latura de 8√2 cm este egală cu:",
-      "choices": ["8 cm","16 cm","16√2 cm","8√2 cm"],
-      "answerIndex": 1,
-      "explanation": "Formula diagonalei pătratului este l√2. Deci d = 8√2 * √2 = 8 * 2 = 16 cm. Sursa: [12]."
-    },
-    {
-      "question": "În triunghiul isoscel ABC, cu AB=AC, mediana AM este 18 cm. Dacă G este centrul de greutate, lungimea segmentului GM este:",
-      "choices": ["6 cm","9 cm","12 cm","18 cm"],
-      "answerIndex": 0,
-      "explanation": "Centrul de greutate se află la 1/3 de bază și 2/3 de vârf. GM = 1/3 * AM = 1/3 * 18 = 6 cm. Sursa: [13]."
-    },
-    {
-      "question": "Aria unui cerc cu diametrul de 10 cm este:",
-      "choices": ["100π cm²","25π cm²","50π cm²","10π cm²"],
-      "answerIndex": 1,
-      "explanation": "Raza este jumătate din diametru, r=5 cm. Aria = πr² = 25π cm². Sursa: [14] (context similar)."
-    },
-    {
-      "question": "Suma muchiilor unui cub este 48 cm. Lungimea diagonalei cubului este:",
-      "choices": ["4 cm","4√3 cm","12 cm","12√3 cm"],
-      "answerIndex": 1,
-      "explanation": "Cubul are 12 muchii. 12 * l = 48 => l = 4 cm. Diagonala cubului = l√3 = 4√3 cm. Sursa: [15]."
-    },
-    {
-      "question": "Se dă expresia E(x) = (x+1)^2 - (x-1)^2. Valoarea expresiei pentru x = 3 este:",
-      "choices": ["10","12","8","0"],
-      "answerIndex": 1,
-      "explanation": "E(3) = (3+1)^2 - (3-1)^2 = 4^2 - 2^2 = 16 - 4 = 12. Sau E(x) = x^2+2x+1 - (x^2-2x+1) = 4x. 4*3 = 12. Sursa: [16] (tip de exercițiu)."
-    },
-    {
-      "question": "Într-un triunghi dreptunghic ABC cu unghiul A de 90 grade, cateta AB=6 cm și ipotenuza BC=10 cm. Aria triunghiului este:",
-      "choices": ["24 cm²","30 cm²","48 cm²","60 cm²"],
-      "answerIndex": 0,
-      "explanation": "Aflăm cateta AC cu Pitagora: AC = √(100-36) = √64 = 8 cm. Aria = (AB*AC)/2 = (6*8)/2 = 24 cm². Sursa: [17] (adaptat)."
-    },
-    {
-      "question": "Volumul unei piramide patrulatere regulate cu latura bazei de 6 cm și înălțimea de 5 cm este:",
-      "choices": ["180 cm³","60 cm³","90 cm³","30 cm³"],
-      "answerIndex": 1,
-      "explanation": "Volumul = (Aria Bazei * h) / 3. Aria bazei = 6^2 = 36. Volum = (36 * 5) / 3 = 12 * 5 = 60 cm³. Sursa: [11] (tip de problemă)."
-    },
-    {
-      "question": "Dacă raportul măsurilor a două unghiuri suplementare este 1/4, atunci măsura unghiului mai mic este:",
-      "choices": ["36 grade","45 grade","30 grade","18 grade"],
-      "answerIndex": 0,
-      "explanation": "x + y = 180 și x/y = 1/4 => y=4x. 5x=180 => x=36 grade. Sursa: [13] (problemă similară)."
-    },
-    {
-      "question": "Soluția ecuației 3x - 5 = x + 3 în mulțimea numerelor reale este:",
-      "choices": ["1","2","4","8"],
-      "answerIndex": 2,
-      "explanation": "3x - x = 3 + 5 => 2x = 8 => x = 4. Sursa: [18] (tip de exercițiu)."
-    },
-    {
-      "question": "În tabelul de mai jos sunt notele unei clase. Media clasei este (aprox): Note: 4(2 elevi), 5(3 elevi), 6(5 elevi), 7(5 elevi), 8(3 elevi), 9(2 elevi).",
-      "choices": ["6,00","6,50","7,00","6,45"],
-      "answerIndex": 3,
-      "explanation": "Suma notelor: 4*2 + 5*3 + 6*5 + 7*5 + 8*3 + 9*2 = 8+15+30+35+24+18 = 130. Nr elevi: 2+3+5+5+3+2 = 20. Media = 130/20 = 6,5. Sursa: [1] (date similare)."
-    },
-    {
-      "question": "Cel mai mic număr întreg din intervalul (-3, 4] este:",
-      "choices": ["-3","-2","0","4"],
-      "answerIndex": 1,
-      "explanation": "Intervalul este deschis la -3, deci -3 nu aparține. Următorul întreg este -2. Sursa: [19]."
-    },
-    {
-      "question": "Dacă unghiurile unui triunghi sunt proporționale cu 2, 3 și 5, atunci cel mai mare unghi are:",
-      "choices": ["36 grade","54 grade","90 grade","100 grade"],
-      "answerIndex": 2,
-      "explanation": "2k + 3k + 5k = 180 => 10k = 180 => k = 18. Cel mai mare unghi este 5k = 5 * 18 = 90 grade. Sursa: [20] (adaptat la triunghi)."
-    },
-    {
-      "question": "Perimetrul unui triunghi echilateral cu linia mijlocie de 4 cm este:",
-      "choices": ["12 cm","24 cm","36 cm","8 cm"],
-      "answerIndex": 1,
-      "explanation": "Linia mijlocie este jumătate din latură. Latura = 8 cm. Perimetrul = 3 * 8 = 24 cm. Sursa: [21] (concept)."
-    }
+  const questions = [
+    { "question": "Rezultatul calculului (2^0 + 2^1 + 2^2) : (2^3 - 1) este:", "choices": ["0", "1", "2", "4"], "answerIndex": 1, "explanation": "Avem 2^0=1, 2^1=2, 2^2=4. Suma lor este 7. De asemenea, 2^3 - 1 = 8 - 1 = 7. Împărțirea dă 7 : 7 = 1." },
+    { "question": "După o reducere cu 10%, prețul unei cărți se micșorează cu 4 lei. Prețul cărții înainte de reducere era:", "choices": ["36 lei", "40 lei", "44 lei", "4,4 lei"], "answerIndex": 1, "explanation": "Reducerea de 10% reprezintă exact 4 lei. Ecuația este 10/100 * x = 4, de unde obținem prețul inițial x = 40 lei." },
+    { "question": "Rezultatul calculului -12 + 12 : 12 este egal cu:", "choices": ["11", "0", "-11", "-12"], "answerIndex": 2, "explanation": "Se efectuează mai întâi operația de împărțire: 12 : 12 = 1. Apoi adunarea: -12 + 1 = -11." },
+    { "question": "Cel mai mare număr întreg din intervalul [-5; 5) este:", "choices": ["6", "5", "4", "-5"], "answerIndex": 2, "explanation": "Intervalul este deschis la dreapta, deci 5 nu este inclus. Cel mai mare număr întreg cuprins în interval este 4." },
+    { "question": "Rezultatul calculului 45 : 5 + (-2) * 2 este egal cu:", "choices": ["14", "22", "13", "5"], "answerIndex": 3, "explanation": "Efectuăm împărțirea și înmulțirea: 45 : 5 = 9 și (-2) * 2 = -4. Apoi 9 + (-4) = 5." },
+    { "question": "Suma numerelor prime de o cifră este egală cu:", "choices": ["45", "17", "27", "26"], "answerIndex": 1, "explanation": "Numerele prime de o cifră sunt 2, 3, 5 și 7. Suma lor este 2 + 3 + 5 + 7 = 17." },
+    { "question": "Cel mai mare divizor comun al numerelor 3 și 4 este:", "choices": ["3", "4", "1", "12"], "answerIndex": 2, "explanation": "Numerele 3 și 4 sunt prime între ele, așadar cel mai mare divizor comun al lor este 1." },
+    { "question": "Suma numerelor naturale din intervalul (-5, 5) este:", "choices": ["-5", "0", "5", "10"], "answerIndex": 3, "explanation": "Numerele naturale din interval sunt 0, 1, 2, 3 și 4. Suma lor este 0 + 1 + 2 + 3 + 4 = 10." },
+    { "question": "Dacă 20% dintr-un număr a este 50, atunci numărul a este egal cu:", "choices": ["10", "100", "25", "250"], "answerIndex": 3, "explanation": "Avem ecuația 20/100 * a = 50, ceea ce înseamnă 1/5 * a = 50, rezultând a = 50 * 5 = 250." },
+    { "question": "Se consideră mulțimile A = {0, 1, 2, 4, 5, 7} și B = {2, 3, 4, 5, 6}. Reuniunea mulțimilor A și B este mulțimea:", "choices": ["{0, 1, 2, 3, 4, 5, 6}", "{0, 1, 2, 3, 4, 5, 6, 7}", "{0, 1, 3, 6, 7}", "{2, 4, 5}"], "answerIndex": 1, "explanation": "Reuniunea a două mulțimi este alcătuită din toate elementele acestora, luate o singură dată. Rezultă {0, 1, 2, 3, 4, 5, 6, 7}." },
+    { "question": "Rezultatul calculului 84 : 6 - 4 * 3 este egal cu:", "choices": ["126", "30", "2", "14"], "answerIndex": 2, "explanation": "Se calculează mai întâi împărțirea și înmulțirea: 84 : 6 = 14 și 4 * 3 = 12. Apoi scăderea: 14 - 12 = 2." },
+    { "question": "Suma dintre cel mai mic și cel mai mare număr natural divizibil cu 3 din intervalul [3; 18) este egală cu:", "choices": ["21", "18", "15", "12"], "answerIndex": 1, "explanation": "Cel mai mic multiplu de 3 din interval (închis la stânga) este 3. Cel mai mare, strict mai mic decât 18, este 15. Suma este 3 + 15 = 18." },
+    { "question": "Numărul de numere întregi cuprinse între -2√2 și 2√3 este egal cu:", "choices": ["4", "5", "6", "7"], "answerIndex": 2, "explanation": "-2√2 = -√8 (situat între -3 și -2) și 2√3 = √12 (situat între 3 și 4). Întregii cuprinși sunt -2, -1, 0, 1, 2, 3, în total 6 numere." },
+    { "question": "Cel mai mare număr natural care împărțit la 8 dă câtul 17, este:", "choices": ["136", "143", "137", "140"], "answerIndex": 1, "explanation": "Conform teoremei împărțirii cu rest, numărul n = 8 * 17 + r, cu r < 8. Restul maxim posibil este 7, deci numărul maxim este 136 + 7 = 143." },
+    { "question": "Rezultatul calculului 0,2 - 2 : 100 este egal cu:", "choices": ["0", "0,08", "0,28", "0,18"], "answerIndex": 3, "explanation": "Efectuăm întâi împărțirea: 2 : 100 = 0,02. Apoi scăderea dă 0,2 - 0,02 = 0,18." },
+    { "question": "Numărul natural n verifică relația 1/2 < (n+2)/4 < 5/3 dacă și numai dacă n face parte din mulțimea:", "choices": ["{0, 1, 2, 3, 4}", "{1, 2, 3, 4}", "{1, 2, 3}", "{2, 3, 4}"], "answerIndex": 1, "explanation": "Aducând la același numitor comun sau multiplicând totul cu 12, obținem 6 < 3n + 6 < 20, adică 0 < 3n < 14. Pentru n natural, soluțiile sunt {1, 2, 3, 4}." },
+    { "question": "Rezultatul calculului 5^2 + 5^2 * 3 este egal cu:", "choices": ["300", "150", "100", "30"], "answerIndex": 2, "explanation": "Avem 25 + 25 * 3 = 25 + 75 = 100." },
+    { "question": "Se consideră mulțimea A = {1, 2, 3, ..., 90}. Probabilitatea ca alegând la întâmplare un număr din mulțimea A acesta să fie pătrat perfect este:", "choices": ["4/45", "1/10", "5/9", "9/10"], "answerIndex": 1, "explanation": "Pătratele perfecte până la 90 sunt 1, 4, 9, 16, 25, 36, 49, 64, 81 (9 cazuri favorabile). Probabilitatea este 9/90 = 1/10." },
+    { "question": "Suma tuturor numerelor naturale, care sunt divizori ai numărului 24, este egală cu:", "choices": ["50", "54", "56", "60"], "answerIndex": 3, "explanation": "Divizorii naturali ai lui 24 sunt 1, 2, 3, 4, 6, 8, 12, 24. Suma lor este 60." },
+    { "question": "Suma soluțiilor ecuației |2x + 3| = 7 este:", "choices": ["3", "-2", "-3", "2"], "answerIndex": 2, "explanation": "Avem două cazuri: 2x+3=7 (x=2) și 2x+3=-7 (x=-5). Suma lor este 2 + (-5) = -3." },
+    { "question": "Produsul numerelor -2 și 5 este egal cu:", "choices": ["-10", "-3", "3", "10"], "answerIndex": 0, "explanation": "Înmulțirea unui număr negativ cu un număr pozitiv are un rezultat negativ. (-2) * 5 = -10." },
+    { "question": "Soluția ecuației 6x - 2 = 1 este numărul:", "choices": ["-1/3", "-1/2", "1/3", "1/2"], "answerIndex": 3, "explanation": "Trecând -2 în membrul drept cu semn schimbat obținem 6x = 1 + 2, deci 6x = 3. Rezultă x = 3/6 = 1/2." },
+    { "question": "Cel mai mare număr întreg de două cifre este:", "choices": ["-99", "-10", "10", "99"], "answerIndex": 3, "explanation": "Numerele întregi includ și numerele pozitive. Cel mai mare număr pozitiv format din exact două cifre este 99." },
+    { "question": "Dintre numerele 7/2, 7/3, 7/4 și 7/5, cel mai mic este:", "choices": ["7/5", "7/4", "7/3", "7/2"], "answerIndex": 0, "explanation": "Fracțiile au același numărător. Fracția care are cel mai mare numitor va avea cea mai mică valoare: 7/5." },
+    { "question": "Media geometrică a numerelor 2√5 și 4√5 este:", "choices": ["2√10", "10√2", "3√5", "40"], "answerIndex": 0, "explanation": "Media geometrică se calculează astfel: √(2√5 * 4√5) = √(8 * 5) = √40 = 2√10." }
   ];
-
-  // Normalizăm: dacă există correctedAnswerIndex/Explanation, le folosim
-  const questions = rawQuestions.map(q => ({
-    question: q.question,
-    choices: q.choices,
-    answerIndex: (typeof q.correctedAnswerIndex === "number") ? q.correctedAnswerIndex : q.answerIndex,
-    explanation: (q.correctedExplanation ?? q.explanation) ?? ""
-  }));
 
   const app = document.getElementById("app");
   const qCounter = document.getElementById("qCounter");
@@ -221,15 +80,12 @@
   const timerBadge = document.getElementById("timerBadge");
   const progressWrap = document.getElementById("progressWrap");
 
-  // === CERINȚE TEST MATEMATICĂ (timp de expirare) ===
-  // 2 minute default; 7 minute pentru întrebări cu geometrie / figuri / puncte coliniare
-  const DEFAULT_TIME_PER_Q = 120; // 2 min
-  const GEOM_TIME_PER_Q = 420;    // 7 min
-
+  // === CERINȚĂ: 5 minute / întrebare ===
+  const TIME_PER_Q = 5 * 60; // sec
   let idx = 0;
   let score = 0;
   let timer = null;
-  let remaining = DEFAULT_TIME_PER_Q;
+  let remaining = TIME_PER_Q;
   let locked = false;
 
   function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
@@ -254,17 +110,8 @@
       .replace(/'/g, "&#039;");
   }
 
-  // Păstrăm condiția anterioară: **...** -> bold + underline
   function formatText(raw) {
-    let text = escapeHtml(raw);
-    text = text.replace(/\*\*(.+?)\*\*/g, '<span class="emph">$1</span>');
-    return text;
-  }
-
-  function isGeometryQuestion(questionText) {
-    const q = questionText.toLowerCase();
-    // Heuristic: figuri / geometrie / puncte coliniare / segmente / unghiuri / arii / corpuri geometrice
-    return /(\bfigura\b|\btriunghi\b|\bcerc\b|\brom(b|bului)\b|\bpătrat\b|\bparalelogram\b|\bcub\b|\bpiramid|trapez|\bpuncte\b|\bcoliniare\b|\bsegment\b|\bunghi\b|\baria\b|\bdiagonal|muchi|volum)/i.test(q);
+    return escapeHtml(raw);
   }
 
   function fmtTime(seconds){
@@ -273,9 +120,10 @@
     return String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
   }
 
-  function startTimer(seconds){
+  function startTimer(){
     stopTimer();
-    remaining = seconds;
+    remaining = TIME_PER_Q;
+
     progressWrap.style.display = "block";
     timerBadge.innerHTML = `⏳ Timp rămas: <span id="timeLeft">${fmtTime(remaining)}</span>`;
     timeBar.style.width = "100%";
@@ -285,7 +133,7 @@
       const tl = document.getElementById("timeLeft");
       if (tl) tl.textContent = fmtTime(Math.max(remaining, 0));
 
-      const pct = (remaining / seconds) * 100;
+      const pct = (remaining / TIME_PER_Q) * 100;
       timeBar.style.width = clamp(pct, 0, 100) + "%";
 
       if (remaining <= 0) {
@@ -299,8 +147,6 @@
     locked = false;
     const q = questions[idx];
     qCounter.textContent = `Întrebarea ${idx + 1} / ${questions.length}`;
-
-    const secondsForThis = isGeometryQuestion(q.question) ? GEOM_TIME_PER_Q : DEFAULT_TIME_PER_Q;
 
     app.innerHTML = `
       <h2>${formatText(q.question)}</h2>
@@ -319,7 +165,7 @@
       <div id="feedback"></div>
       <div class="footer small muted">
         <div>Scor curent: <b id="scoreNow">${score}</b> / ${questions.length}</div>
-        <div>Timp / întrebare: <code>${fmtTime(secondsForThis)}</code></div>
+        <div>Timp / întrebare: <code>${fmtTime(TIME_PER_Q)}</code></div>
       </div>
     `;
 
@@ -338,7 +184,7 @@
       revealAnswer(null, false);
     };
 
-    startTimer(secondsForThis);
+    startTimer();
   }
 
   function revealAnswer(selectedIndex, timedOut){
