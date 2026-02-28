@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Quiz Matematică</title>
+  <title>Test Matematică</title>
   <style>
     body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; max-width: 980px; margin: 24px auto; padding: 0 16px; }
     .topbar { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
@@ -34,11 +34,11 @@
 </head>
 <body>
 
-<h1>Quiz Matematică</h1>
+<h1>Test Matematică</h1>
 
 <div class="topbar">
   <div class="badge" id="qCounter">Întrebarea 1 / 1</div>
-  <div class="badge timer" id="timerBadge">⏳ Timp rămas: <span id="timeLeft">05:00</span></div>
+  <div class="badge timer" id="timerBadge">⏳ Timp rămas: <span id="timeLeft">02:00</span></div>
 </div>
 <div class="progress" id="progressWrap"><div id="timeBar"></div></div>
 
@@ -47,31 +47,31 @@
 <script>
   // === Întrebări (JSON-ul tău) ===
   const questions = [
-    { "question": "Rezultatul calculului (2^0 + 2^1 + 2^2) : (2^3 - 1) este:", "choices": ["0", "1", "2", "4"], "answerIndex": 1, "explanation": "Avem 2^0=1, 2^1=2, 2^2=4. Suma lor este 7. De asemenea, 2^3 - 1 = 8 - 1 = 7. Împărțirea dă 7 : 7 = 1." },
-    { "question": "După o reducere cu 10%, prețul unei cărți se micșorează cu 4 lei. Prețul cărții înainte de reducere era:", "choices": ["36 lei", "40 lei", "44 lei", "4,4 lei"], "answerIndex": 1, "explanation": "Reducerea de 10% reprezintă exact 4 lei. Ecuația este 10/100 * x = 4, de unde obținem prețul inițial x = 40 lei." },
-    { "question": "Rezultatul calculului -12 + 12 : 12 este egal cu:", "choices": ["11", "0", "-11", "-12"], "answerIndex": 2, "explanation": "Se efectuează mai întâi operația de împărțire: 12 : 12 = 1. Apoi adunarea: -12 + 1 = -11." },
-    { "question": "Cel mai mare număr întreg din intervalul [-5; 5) este:", "choices": ["6", "5", "4", "-5"], "answerIndex": 2, "explanation": "Intervalul este deschis la dreapta, deci 5 nu este inclus. Cel mai mare număr întreg cuprins în interval este 4." },
-    { "question": "Rezultatul calculului 45 : 5 + (-2) * 2 este egal cu:", "choices": ["14", "22", "13", "5"], "answerIndex": 3, "explanation": "Efectuăm împărțirea și înmulțirea: 45 : 5 = 9 și (-2) * 2 = -4. Apoi 9 + (-4) = 5." },
-    { "question": "Suma numerelor prime de o cifră este egală cu:", "choices": ["45", "17", "27", "26"], "answerIndex": 1, "explanation": "Numerele prime de o cifră sunt 2, 3, 5 și 7. Suma lor este 2 + 3 + 5 + 7 = 17." },
-    { "question": "Cel mai mare divizor comun al numerelor 3 și 4 este:", "choices": ["3", "4", "1", "12"], "answerIndex": 2, "explanation": "Numerele 3 și 4 sunt prime între ele, așadar cel mai mare divizor comun al lor este 1." },
-    { "question": "Suma numerelor naturale din intervalul (-5, 5) este:", "choices": ["-5", "0", "5", "10"], "answerIndex": 3, "explanation": "Numerele naturale din interval sunt 0, 1, 2, 3 și 4. Suma lor este 0 + 1 + 2 + 3 + 4 = 10." },
-    { "question": "Dacă 20% dintr-un număr a este 50, atunci numărul a este egal cu:", "choices": ["10", "100", "25", "250"], "answerIndex": 3, "explanation": "Avem ecuația 20/100 * a = 50, ceea ce înseamnă 1/5 * a = 50, rezultând a = 50 * 5 = 250." },
-    { "question": "Se consideră mulțimile A = {0, 1, 2, 4, 5, 7} și B = {2, 3, 4, 5, 6}. Reuniunea mulțimilor A și B este mulțimea:", "choices": ["{0, 1, 2, 3, 4, 5, 6}", "{0, 1, 2, 3, 4, 5, 6, 7}", "{0, 1, 3, 6, 7}", "{2, 4, 5}"], "answerIndex": 1, "explanation": "Reuniunea a două mulțimi este alcătuită din toate elementele acestora, luate o singură dată. Rezultă {0, 1, 2, 3, 4, 5, 6, 7}." },
-    { "question": "Rezultatul calculului 84 : 6 - 4 * 3 este egal cu:", "choices": ["126", "30", "2", "14"], "answerIndex": 2, "explanation": "Se calculează mai întâi împărțirea și înmulțirea: 84 : 6 = 14 și 4 * 3 = 12. Apoi scăderea: 14 - 12 = 2." },
-    { "question": "Suma dintre cel mai mic și cel mai mare număr natural divizibil cu 3 din intervalul [3; 18) este egală cu:", "choices": ["21", "18", "15", "12"], "answerIndex": 1, "explanation": "Cel mai mic multiplu de 3 din interval (închis la stânga) este 3. Cel mai mare, strict mai mic decât 18, este 15. Suma este 3 + 15 = 18." },
-    { "question": "Numărul de numere întregi cuprinse între -2√2 și 2√3 este egal cu:", "choices": ["4", "5", "6", "7"], "answerIndex": 2, "explanation": "-2√2 = -√8 (situat între -3 și -2) și 2√3 = √12 (situat între 3 și 4). Întregii cuprinși sunt -2, -1, 0, 1, 2, 3, în total 6 numere." },
-    { "question": "Cel mai mare număr natural care împărțit la 8 dă câtul 17, este:", "choices": ["136", "143", "137", "140"], "answerIndex": 1, "explanation": "Conform teoremei împărțirii cu rest, numărul n = 8 * 17 + r, cu r < 8. Restul maxim posibil este 7, deci numărul maxim este 136 + 7 = 143." },
-    { "question": "Rezultatul calculului 0,2 - 2 : 100 este egal cu:", "choices": ["0", "0,08", "0,28", "0,18"], "answerIndex": 3, "explanation": "Efectuăm întâi împărțirea: 2 : 100 = 0,02. Apoi scăderea dă 0,2 - 0,02 = 0,18." },
-    { "question": "Numărul natural n verifică relația 1/2 < (n+2)/4 < 5/3 dacă și numai dacă n face parte din mulțimea:", "choices": ["{0, 1, 2, 3, 4}", "{1, 2, 3, 4}", "{1, 2, 3}", "{2, 3, 4}"], "answerIndex": 1, "explanation": "Aducând la același numitor comun sau multiplicând totul cu 12, obținem 6 < 3n + 6 < 20, adică 0 < 3n < 14. Pentru n natural, soluțiile sunt {1, 2, 3, 4}." },
-    { "question": "Rezultatul calculului 5^2 + 5^2 * 3 este egal cu:", "choices": ["300", "150", "100", "30"], "answerIndex": 2, "explanation": "Avem 25 + 25 * 3 = 25 + 75 = 100." },
-    { "question": "Se consideră mulțimea A = {1, 2, 3, ..., 90}. Probabilitatea ca alegând la întâmplare un număr din mulțimea A acesta să fie pătrat perfect este:", "choices": ["4/45", "1/10", "5/9", "9/10"], "answerIndex": 1, "explanation": "Pătratele perfecte până la 90 sunt 1, 4, 9, 16, 25, 36, 49, 64, 81 (9 cazuri favorabile). Probabilitatea este 9/90 = 1/10." },
-    { "question": "Suma tuturor numerelor naturale, care sunt divizori ai numărului 24, este egală cu:", "choices": ["50", "54", "56", "60"], "answerIndex": 3, "explanation": "Divizorii naturali ai lui 24 sunt 1, 2, 3, 4, 6, 8, 12, 24. Suma lor este 60." },
-    { "question": "Suma soluțiilor ecuației |2x + 3| = 7 este:", "choices": ["3", "-2", "-3", "2"], "answerIndex": 2, "explanation": "Avem două cazuri: 2x+3=7 (x=2) și 2x+3=-7 (x=-5). Suma lor este 2 + (-5) = -3." },
-    { "question": "Produsul numerelor -2 și 5 este egal cu:", "choices": ["-10", "-3", "3", "10"], "answerIndex": 0, "explanation": "Înmulțirea unui număr negativ cu un număr pozitiv are un rezultat negativ. (-2) * 5 = -10." },
-    { "question": "Soluția ecuației 6x - 2 = 1 este numărul:", "choices": ["-1/3", "-1/2", "1/3", "1/2"], "answerIndex": 3, "explanation": "Trecând -2 în membrul drept cu semn schimbat obținem 6x = 1 + 2, deci 6x = 3. Rezultă x = 3/6 = 1/2." },
-    { "question": "Cel mai mare număr întreg de două cifre este:", "choices": ["-99", "-10", "10", "99"], "answerIndex": 3, "explanation": "Numerele întregi includ și numerele pozitive. Cel mai mare număr pozitiv format din exact două cifre este 99." },
-    { "question": "Dintre numerele 7/2, 7/3, 7/4 și 7/5, cel mai mic este:", "choices": ["7/5", "7/4", "7/3", "7/2"], "answerIndex": 0, "explanation": "Fracțiile au același numărător. Fracția care are cel mai mare numitor va avea cea mai mică valoare: 7/5." },
-    { "question": "Media geometrică a numerelor 2√5 și 4√5 este:", "choices": ["2√10", "10√2", "3√5", "40"], "answerIndex": 0, "explanation": "Media geometrică se calculează astfel: √(2√5 * 4√5) = √(8 * 5) = √40 = 2√10." }
+    { "question": "Rezultatul calculului 4 + 12 : 2 este egal cu:", "choices": ["6","8","10","12"], "answerIndex": 2, "explanation": "Respectând ordinea efectuării operațiilor, calculăm mai întâi împărțirea: 12 : 2 = 6, apoi adunarea: 4 + 6 = 10." },
+    { "question": "Dacă a / 2 = 3 / 2, atunci valoarea fracției 4 / a este egală cu:", "choices": ["1/3","4/3","2","3"], "answerIndex": 1, "explanation": "Din egalitatea a / 2 = 3 / 2 deducem direct că a = 3. Înlocuind în expresie, rezultă 4 / 3." },
+    { "question": "Rezultatul calculului 2026 - 12 : 12 este:", "choices": ["-1","0","2025","2026"], "answerIndex": 2, "explanation": "Împărțirea se efectuează prima: 12 : 12 = 1. Apoi scăderea dă 2026 - 1 = 2025." },
+    { "question": "Dacă 25% dintr-un număr a este 30, atunci 30% din același număr a este:", "choices": ["25","40","24","36"], "answerIndex": 3, "explanation": "Dacă 25% din a este 30, numărul a este 30 * 4 = 120. Calculând 30% din 120, obținem (30/100) * 120 = 36." },
+    { "question": "Media aritmetică a numerelor a = √12 și b = 4 - 2√3 este:", "choices": ["4√3","2","4","4 + 4√3"], "answerIndex": 1, "explanation": "Deoarece √12 = 2√3, media aritmetică este (2√3 + 4 - 2√3) / 2 = 4 / 2 = 2." },
+    { "question": "Rezultatul calculului (30 + 4 * 5) : 10 este egal cu:", "choices": ["17","5","23","32"], "answerIndex": 1, "explanation": "Calculăm mai întâi înmulțirea din paranteză (4 * 5 = 20), obținem 30 + 20 = 50. Apoi 50 : 10 = 5." },
+    { "question": "Triplul numărului 5/7 este egal cu:", "choices": ["15/21","5/21","15/7","8/7"], "answerIndex": 2, "explanation": "Triplul înseamnă înmulțirea cu 3: 3 * (5/7) = 15/7." },
+    { "question": "Două treimi din numărul a este egal cu 24. Numărul a este egal cu:", "choices": ["16","8","12","36"], "answerIndex": 3, "explanation": "Ecuația este (2/3) * a = 24. Înmulțind cu 3 și împărțind la 2, obținem a = (24 * 3) / 2 = 36." },
+    { "question": "Dintre numerele 5/13, 5/23, 5/33 și 5/43, cel mai mare este:", "choices": ["5/13","5/23","5/33","5/43"], "answerIndex": 0, "explanation": "Toate fracțiile au același numărător. Fracția cea mai mare este cea cu numitorul cel mai mic, adică 5/13." },
+    { "question": "Numărul care reprezintă 30% din 300 este egal cu:", "choices": ["3","30","90","900"], "answerIndex": 2, "explanation": "Calculul este (30/100) * 300 = 30 * 3 = 90." },
+    { "question": "Dintre numerele √26, 3√3, 5 și 2√6, cel mai mare este numărul:", "choices": ["√26","3√3","5","2√6"], "answerIndex": 1, "explanation": "Introducem factorii sub radical: √26, 3√3 = √27, 5 = √25, 2√6 = √24. Cel mai mare este √27, adică 3√3." },
+    { "question": "Dacă a/3 = 13/2, atunci valoarea raportului (a-3)/3 este:", "choices": ["4,(6)","5","5,5","6,5"], "answerIndex": 2, "explanation": "Raportul (a-3)/3 poate fi despărțit în a/3 - 3/3 = a/3 - 1. Înlocuind a/3 obținem 13/2 - 1 = 6,5 - 1 = 5,5." },
+    { "question": "Fie numerele reale a = 6 - √11 și b = 6 + √11. Diferența dintre media aritmetică și media geometrică a numerelor a și b este:", "choices": ["1","3","5","7"], "answerIndex": 0, "explanation": "Media aritmetică este (6-√11 + 6+√11)/2 = 6. Media geometrică este √((6-√11)(6+√11)) = √(36-11) = √25 = 5. Diferența este 6 - 5 = 1." },
+    { "question": "Știind că x + 3y = 5, unde x și y sunt numere reale, valoarea expresiei 3x + 9y + 12 este:", "choices": ["15","17","24","27"], "answerIndex": 3, "explanation": "Scoatem factor comun 3 din primii doi termeni: 3(x + 3y) + 12. Înlocuind, obținem 3 * 5 + 12 = 15 + 12 = 27." },
+    { "question": "Rezultatul calculului 12 - 2 * 7 este egal cu:", "choices": ["2","-2","0","70"], "answerIndex": 1, "explanation": "Operația de înmulțire este prioritară: 12 - 14 = -2." },
+    { "question": "Media aritmetică a numerelor 10, 20, 30 și 40 este egală cu:", "choices": ["30","25","40","15"], "answerIndex": 1, "explanation": "Suma lor este 100, iar fiind patru numere, le împărțim la 4: 100 / 4 = 25." },
+    { "question": "Cel mai mic număr întreg mai mare decât -3√5 este:", "choices": ["-8","-5","-6","-7"], "answerIndex": 2, "explanation": "-3√5 = -√45. Deoarece √36 < √45 < √49, adică -7 < -√45 < -6, cel mai mic număr întreg mai mare decât -√45 este -6." },
+    { "question": "Dintre fracțiile zecimale 0,126 ; 0,12(6) ; 0,(126) și 0,1(26) cea mai mică este:", "choices": ["0,126","0,12(6)","0,(126)","0,1(26)"], "answerIndex": 0, "explanation": "Analizând zecimalele, avem 0,1260...; 0,1266...; 0,126126...; 0,12626... Cel mai mic număr este cel cu prima cifră a miimilor 0, adică 0,126." },
+    { "question": "Diferența dintre media aritmetică și cea geometrică a numerelor 2+√3 și 2-√3 este egală cu:", "choices": ["1","2","3","4"], "answerIndex": 0, "explanation": "Media aritmetică = (2+√3 + 2-√3)/2 = 2. Media geometrică = √((2+√3)(2-√3)) = √(4-3) = 1. Diferența: 2 - 1 = 1." },
+    { "question": "Dacă a = 3 + √5 și b = 3 - √5, atunci media geometrică a numerelor a și b este egală cu:", "choices": ["3","2","√5","4"], "answerIndex": 1, "explanation": "Media geometrică este √(ab) = √((3+√5)(3-√5)) = √(9-5) = √4 = 2." },
+    {"question": "Fie numerele a = -2,3 și b = 4,13. Dintre numerele a, b, -a și -b, cel mai mic este numărul:","choices": ["a","b","-a","-b"],"answerIndex": 3,"explanation": "Valorile sunt a = -2,3; b = 4,13; -a = 2,3; -b = -4,13. Cel mai mic dintre acestea este -4,13, adică -b."},
+    {"question": "Dacă 30% din numărul a reprezintă 45% din b, atunci valoarea raportului b/a este:","choices": ["0,(6)","0,5","1,2","1,5"],"answerIndex": 0,"explanation": "Avem ecuația 30a = 45*b. Împărțind pentru a obține b/a rezultă 30/45, care simplificat dă 2/3. Transformând în fracție zecimală este 0,(6)."},
+    { "question": "Rezultatul calculului 2025^0 + 2025 : 2025 - 1^2025 + 0^2025 este egal cu:", "choices": ["2025","0","2024","1"], "answerIndex": 3, "explanation": "Avem: 2025^0 = 1; 2025 : 2025 = 1; 1^2025 = 1; 0^2025 = 0. Calculul final devine: 1 + 1 - 1 + 0 = 1." },
+    { "question": "Fie proporția x/y = 5/7. Valoarea expresiei 49x - 35y este egală cu:", "choices": ["0","5/7","7/5","35"], "answerIndex": 0, "explanation": "Din proporție rezultă 7x = 5y, echivalent cu 7x - 5y = 0. Înmulțind totul cu 7, obținem 49x - 35y = 0." },
+    { "question": "Într-o clasă sunt 25 de elevi. 15 elevi joacă handbal, 11 elevi joacă fotbal și 5 elevi nu practică niciun sport. Câți elevi joacă și handbal și fotbal?", "choices": ["6","5","1","8"], "answerIndex": 0, "explanation": "Numărul elevilor care practică măcar un sport este 25 - 5 = 20. Adunând 15 + 11 = 26. Intersecția este 26 - 20 = 6." }
   ];
 
   const app = document.getElementById("app");
@@ -80,12 +80,32 @@
   const timerBadge = document.getElementById("timerBadge");
   const progressWrap = document.getElementById("progressWrap");
 
-  // === CERINȚĂ: 5 minute / întrebare ===
-  const TIME_PER_Q = 5 * 60; // sec
+  // === CERINȚĂ TEST MATEMATICĂ: 2 minute / întrebare,
+  // dar 7 minute pentru întrebări cu figuri geometrice / puncte coliniare / figură alăturată ===
+  const DEFAULT_TIME = 2 * 60;  // 2 min
+  const GEOM_TIME = 7 * 60;     // 7 min
+
+  function isGeometryQuestion(text) {
+    const t = (text || "").toLowerCase();
+    const keywords = [
+      "figur", "figura", "alătur", "alatur",
+      "coliniar", "puncte", "segment", "triunghi",
+      "cerc", "romb", "pătrat", "patrat", "paralelogram",
+      "trapez", "cub", "piramid", "diagonal", "unghi", "aria", "perimetr"
+    ];
+    return keywords.some(k => t.includes(k));
+  }
+
+  function timeForQuestion(q) {
+    // dacă se detectează context geometric / figură -> 7 minute, altfel 2 minute
+    return isGeometryQuestion(q.question) ? GEOM_TIME : DEFAULT_TIME;
+  }
+
   let idx = 0;
   let score = 0;
   let timer = null;
-  let remaining = TIME_PER_Q;
+  let remaining = DEFAULT_TIME;
+  let currentLimit = DEFAULT_TIME;
   let locked = false;
 
   function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
@@ -111,6 +131,7 @@
   }
 
   function formatText(raw) {
+    // păstrăm simplu; dacă vrei MathJax ulterior, îl putem integra.
     return escapeHtml(raw);
   }
 
@@ -122,7 +143,9 @@
 
   function startTimer(){
     stopTimer();
-    remaining = TIME_PER_Q;
+    const q = questions[idx];
+    currentLimit = timeForQuestion(q);
+    remaining = currentLimit;
 
     progressWrap.style.display = "block";
     timerBadge.innerHTML = `⏳ Timp rămas: <span id="timeLeft">${fmtTime(remaining)}</span>`;
@@ -133,7 +156,7 @@
       const tl = document.getElementById("timeLeft");
       if (tl) tl.textContent = fmtTime(Math.max(remaining, 0));
 
-      const pct = (remaining / TIME_PER_Q) * 100;
+      const pct = (remaining / currentLimit) * 100;
       timeBar.style.width = clamp(pct, 0, 100) + "%";
 
       if (remaining <= 0) {
@@ -147,6 +170,8 @@
     locked = false;
     const q = questions[idx];
     qCounter.textContent = `Întrebarea ${idx + 1} / ${questions.length}`;
+
+    const perQ = timeForQuestion(q);
 
     app.innerHTML = `
       <h2>${formatText(q.question)}</h2>
@@ -165,7 +190,7 @@
       <div id="feedback"></div>
       <div class="footer small muted">
         <div>Scor curent: <b id="scoreNow">${score}</b> / ${questions.length}</div>
-        <div>Timp / întrebare: <code>${fmtTime(TIME_PER_Q)}</code></div>
+        <div>Timp / întrebare: <code>${fmtTime(perQ)}</code></div>
       </div>
     `;
 
@@ -246,7 +271,7 @@
         <div style="margin-top:8px;">Notă: <b>${nota}</b> / 10</div>
       </div>
       <div class="row" style="margin-top:12px;">
-        <button class="primary" id="restartBtn">Reîncepe quiz-ul</button>
+        <button class="primary" id="restartBtn">Reîncepe testul</button>
       </div>
       <p class="small muted" style="margin-top:10px;">
         Notarea este proporțională: 0% = 1, 100% = 10.
