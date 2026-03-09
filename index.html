@@ -1,393 +1,639 @@
-<!doctype html>
-<html lang="ro">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Quiz Limba Română</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSV Flashcards</title>
   <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; max-width: 980px; margin: 24px auto; padding: 0 16px; }
-    .topbar { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
-    .badge { display:inline-block; padding:6px 10px; border:1px solid #ddd; border-radius:999px; font-size:14px; }
-    .card { border:1px solid #e5e5e5; border-radius:14px; padding:16px; margin:14px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
-    h1 { margin: 0 0 10px; font-size: 22px; }
-    h2 { margin: 0 0 10px; font-size: 18px; line-height: 1.35; }
-    .choices { margin: 10px 0; }
-    .choice { display:flex; gap:10px; padding:10px; border:1px solid #eee; border-radius:12px; margin:8px 0; cursor:pointer; }
-    .choice:hover { background: #fafafa; }
-    .choice input { margin-top: 3px; }
-    button { padding:10px 14px; border-radius:12px; border:1px solid #ddd; background:white; cursor:pointer; font-weight:600; }
-    button:hover { background:#f6f6f6; }
-    button.primary { background:#111; color:#fff; border-color:#111; }
-    button.primary:hover { background:#222; }
-    .row { display:flex; gap:10px; flex-wrap:wrap; }
-    .muted { opacity:.75; }
-    .result { padding: 12px; border-radius: 12px; border: 1px solid #e9e9e9; background: #fbfbfb; margin-top: 12px; }
-    .ok { border-color: #cfead6; background: #f3fbf5; }
-    .bad { border-color: #ffd0d0; background: #fff5f5; }
-    .timer { font-variant-numeric: tabular-nums; }
-    .progress { height: 10px; background: #eee; border-radius: 999px; overflow:hidden; margin-top: 10px; }
-    .progress > div { height:100%; width:0%; background:#111; transition: width .2s linear; }
-    .footer { margin-top: 18px; display:flex; justify-content:space-between; gap: 12px; flex-wrap:wrap; }
-    .small { font-size: 13px; }
-    code { background:#f6f6f6; padding:2px 6px; border-radius:8px; }
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-2: #22c55e;
+      --danger: #f97316;
+      --border: rgba(255,255,255,0.1);
+      --shadow: 0 20px 50px rgba(0,0,0,0.35);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(56,189,248,0.18), transparent 25%),
+        radial-gradient(circle at top left, rgba(34,197,94,0.15), transparent 20%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      gap: 20px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .header {
+      padding: 24px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .title {
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr auto auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    input[type="file"], input[type="number"], select, button {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      transition: 0.18s ease;
+      font-weight: 700;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .primary { background: rgba(56,189,248,0.16); }
+    .success { background: rgba(34,197,94,0.16); }
+    .warn { background: rgba(249,115,22,0.16); }
+
+    .main {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 20px;
+    }
+
+    .sidebar, .viewer {
+      padding: 20px;
+    }
+
+    .stats {
+      display: grid;
+      gap: 12px;
+    }
+
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 1.35rem;
+      font-weight: 800;
+    }
+
+    .progress {
+      height: 14px;
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width 0.25s ease;
+    }
+
+    .flashcard-shell {
+      display: grid;
+      gap: 16px;
+    }
+
+    .timer-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .timer-pill {
+      min-width: 88px;
+      text-align: center;
+      font-weight: 800;
+      color: white;
+      background: rgba(56,189,248,0.15);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: 999px;
+    }
+
+    .timer-pill.done {
+      background: rgba(249,115,22,0.18);
+    }
+
+    .flashcard {
+      min-height: 360px;
+      perspective: 1200px;
+    }
+
+    .flashcard-inner {
+      position: relative;
+      width: 100%;
+      min-height: 360px;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .flashcard.flipped .flashcard-inner {
+      transform: rotateY(180deg);
+    }
+
+    .face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .face.back {
+      transform: rotateY(180deg);
+      background: linear-gradient(180deg, rgba(56,189,248,0.06), rgba(34,197,94,0.06));
+    }
+
+    .face-tag {
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+
+    .face-text {
+      font-size: clamp(1.2rem, 2vw, 2rem);
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .empty {
+      padding: 32px;
+      border: 1px dashed var(--border);
+      border-radius: 20px;
+      text-align: center;
+      color: var(--muted);
+      background: rgba(255,255,255,0.02);
+    }
+
+    code.inline {
+      background: rgba(255,255,255,0.08);
+      padding: 2px 8px;
+      border-radius: 8px;
+      color: #dbeafe;
+    }
+
+    @media (max-width: 900px) {
+      .toolbar, .main {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
+  <div class="container">
+    <section class="card header">
+      <div>
+        <h1 class="title">CSV Flashcards</h1>
+        <p class="subtitle">
+          Upload a CSV and study it as flashcards. Each card starts a thinking timer
+          with a default of 30 seconds before you flip it.
+        </p>
+      </div>
 
-<h1>Quiz Limba Română</h1>
+      <div class="toolbar">
+        <div class="field">
+          <label for="csvFile">CSV file</label>
+          <input id="csvFile" type="file" accept=".csv,text/csv" />
+        </div>
 
-<div class="topbar">
-  <div class="badge" id="qCounter">Întrebarea 1 / 1</div>
-  <div class="badge timer" id="timerBadge">⏳ Timp rămas: <span id="timeLeft">02:00</span></div>
-</div>
-<div class="progress" id="progressWrap"><div id="timeBar"></div></div>
+        <div class="field">
+          <label for="separator">Separator</label>
+          <select id="separator">
+            <option value=",">Comma</option>
+            <option value=";">Semicolon</option>
+            <option value="\t">Tab</option>
+          </select>
+        </div>
 
-<div id="app" class="card"></div>
+        <div class="field">
+          <label for="timerSeconds">Thinking timer (seconds)</label>
+          <input id="timerSeconds" type="number" min="5" max="300" value="30" />
+        </div>
 
-<script>
-  // === Întrebări (JSON-ul tău) ===
-  const questions = [
-    {
-      "question": "Litera „x” se pronunță [gz] în toate cuvintele din seria: [Sursa 47]",
-      "choices": ["excursie, examen, mixer","examina, exil, exactitate","dexteritate, taximetrist, flexiune","malaxor, xilofon, axiomă"],
-      "answerIndex": 1,
-      "explanation": "Conform regulilor fonetice și fișelor de exerciții, când „x” este flancat de vocale în cuvinte precum „examen”, „exil” sau „exactitate”, se pronunță [gz]."
-    },
-    {
-      "question": "Câți diftongi sunt în versul: „Când din culme-n culme noaptea buciumele răsunau...” (V. Alecsandri)? [Sursa 47]",
-      "choices": ["Cinci diftongi","Patru diftongi","Trei diftongi","Doi diftongi"],
-      "answerIndex": 2,
-      "explanation": "Diftongii se găsesc în cuvintele „noaptea” (oa, ea) și „răsunau” (au). În total sunt trei diftongi."
-    },
-    {
-      "question": "Identificați seria în care se stabilește o relație de omonimie: [Sursa 45]",
-      "choices": ["Și-a făcut o casă mare. / Văd că nu și-a făcut tema.","Copilul sare gardul. / Mama va pune sare în mâncare.","Copiii vorbesc cam tare. / Ionel va fi mereu un om tare.","Copilul a trecut de examen. / Trandafirii bunicii s-au trecut."],
-      "answerIndex": 1,
-      "explanation": "Cuvintele „sare” (verb) și „sare” (substantiv) au aceeași formă, dar sensuri și apartenențe morfologice complet diferite, fiind omonime."
-    },
-    {
-      "question": "Câte predicate sunt în versurile: „Din oglindă mă privea un trup firav / Cu claviatura coastelor distinctă, / Inima-apăsa pe clape grav / Și-ncerca să-apară în oglindă.”? [Sursa 53]",
-      "choices": ["Patru predicate","Trei predicate","Două predicate","Cinci predicate"],
-      "answerIndex": 0,
-      "explanation": "Predicatele sunt exprimate prin cele patru verbe predicative din fragment: „privea”, „-apăsa”, „-ncerca” și „să-apară”."
-    },
-    {
-      "question": "Adjectivul are funcția sintactică de nume predicativ în enunțul: [Sursa 19]",
-      "choices": ["Aura a rămas o fată frumoasă.","Copiii par foarte fericiți astăzi.","Ionel a ajuns un medic extraordinar.","Fata va fi cea mai bună patinatoare."],
-      "answerIndex": 1,
-      "explanation": "Verbul copulativ „par” se leagă de adjectivul „fericiți”, care devine astfel nume predicativ și formează predicatul nominal."
-    },
-    {
-      "question": "Există un subiect neexprimat, INCLUS, în enunțul: [Sursa 85]",
-      "choices": ["Să pleci mai repede!","Au sosit ieri seara.","Plouă torențial.","Veniți la noi!"],
-      "answerIndex": 0,
-      "explanation": "Subiectul este inclus în desinența verbului la persoana a II-a singular: „(tu) să pleci”."
-    },
-    {
-      "question": "Funcția sintactică a cuvântului evidențiat din enunțul „Mașina de acolo este frumoasă” este: [Sursa 21]",
-      "choices": ["Circumstanțial de loc","Complement prepozițional","Atribut adverbial","Nume predicativ"],
-      "answerIndex": 2,
-      "explanation": "Adverbul de loc însoțit de prepoziție („de acolo”) determină un substantiv („mașina”), îndeplinind funcția de atribut adverbial."
-    },
-    {
-      "question": "Seria care conține DOAR substantive defective de singular este: [Sursa 20]",
-      "choices": ["aur, argint, fotbal","pantaloni, ițari, vacanțe","icre, modalități, bachet","ochelari, spaghete, tăiței"],
-      "answerIndex": 3,
-      "explanation": "Aceste cuvinte se utilizează exclusiv cu formă de plural (ex: nu spunem „un ochelar” sau „o spaghetă” în mod curent literar)."
-    },
-    {
-      "question": "Seria care conține DOAR prepoziții specifice cazului Dativ este: [Sursa 20/43]",
-      "choices": ["înaintea, înapoia, în fața","în jurul, dinspre, printre","contra, dedesubtul, în spatele","mulțumită, grație, datorită"],
-      "answerIndex": 3,
-      "explanation": "Prepozițiile „grație” (provenită din substantiv) și „mulțumită”, „datorită” (provenite din participii) se construiesc obligatoriu cu cazul Dativ."
-    },
-    {
-      "question": "Alegeți enunțul scris corect conform normelor ortografice: [Sursa 18]",
-      "choices": ["Membri echipii sunt respectuoși.","Membrii echipei sunt respectuoși.","Membri echipei sunt respectuoși.","Membrii echipei sunt respectosi."],
-      "answerIndex": 1,
-      "explanation": "Substantivul masculin „membru” la plural articulat se scrie cu doi „i” (membrii), iar forma corectă de genitiv pentru „echipă” este „echipei”."
-    },
-    {
-      "question": "În care dintre următoarele variante verbul „a fi” este VERB AUXILIAR? [Sursa 18]",
-      "choices": ["Blana pisicii este moale.","Pisica este pufoasă.","Pisica a fost la noi.","Pisica este mângâiată de Matei."],
-      "answerIndex": 3,
-      "explanation": "În construcția pasivă „este mângâiată”, verbul „a fi” își pierde sensul propriu și ajută doar la conjugarea verbului de bază, fiind auxiliar."
-    },
-    {
-      "question": "Rolul incipitului într-un text narativ este de a: [Sursa 23]",
-      "choices": ["Prezenta deznodământul.","Formula mesajul moral.","Caracteriza personajul principal.","Introduce cititorul în universul operei."],
-      "answerIndex": 3,
-      "explanation": "Incipitul are funcția de a fixa reperele spațio-temporale și de a face trecerea din lumea reală în lumea ficțională a textului."
-    },
-    {
-      "question": "Care dintre următoarele romane este asociat cu valoarea culturală „prietenia și aventura” în materialele studiate? [Sursa 34]",
-      "choices": ["„Mesagerul” de Lois Lowry","„Fahrenheit 451” de Ray Bradbury","„Bătrânul și marea” de Ernest Hemingway","„Inocenții” de Ioana Pârvulescu"],
-      "answerIndex": 3,
-      "explanation": "Tabelul cu valori literare asociază clar operele „Platanos”, „Micul Prinț” și „Inocenții” cu prietenia și aventura."
-    },
-    {
-      "question": "Forma corectă de Genitiv-Dativ a substantivului „piață” este: [Sursa 31]",
-      "choices": ["Pieții","Piaței","Pieței","Pieților"],
-      "answerIndex": 2,
-      "explanation": "Conform tabelului ortografic, forma articulată corectă la genitiv-dativ singular este „pieței”."
-    },
-    {
-      "question": "În propoziția „Aproapele meu îți vrea binele”, cuvintele subliniate („Aproapele”, „binele”) s-au format, în ordine, prin: [Sursa 24]",
-      "choices": ["derivare, derivare","conversiune, derivare","conversiune, conversiune","compunere, conversiune"],
-      "answerIndex": 2,
-      "explanation": "Ambele cuvinte provin din adverbe („aproape” și „bine”) care, prin atașarea articolului hotărât („-le”), s-au transformat în substantive (conversiune)."
-    },
-    {
-      "question": "Propoziția subordonată din fraza „Am dat de veste că vom aduce toate cadourile” este: [Sursa 87]",
-      "choices": ["Atributivă","Completivă directă","Subiectivă","Circumstanțială de mod"],
-      "answerIndex": 1,
-      "explanation": "Locuțiunea verbală „a da de veste” se traduce prin „a vesti”. Întrebarea „ce am vestit?” primește răspunsul de la propoziția subordonată completivă directă."
-    },
-    {
-      "question": "Seria care conține DOAR conjuncții subordonatoare este: [Sursa 26]",
-      "choices": ["ca să, ca...să, fiindcă, ori","deci, așadar, sau, chiar dacă","și, prin urmare, în timp ce, de vreme ce","să, că, dacă, deși"],
-      "answerIndex": 3,
-      "explanation": "„Să”, „că”, „dacă”, „deși” introduc exclusiv propoziții subordonate, neavând rol de coordonare."
-    },
-    {
-      "question": "Tiparul narativ se caracterizează prin: [Sursa 24]",
-      "choices": ["Exprimarea directă a sentimentelor","Prezența naratorului și a personajelor","Structura exclusiv în versuri","Utilizarea exclusivă a dialogului"],
-      "answerIndex": 1,
-      "explanation": "Textul narativ (epic) se bazează pe relatarea unor întâmplări de către o voce auctorială (naratorul), cu participarea personajelor."
-    },
-    {
-      "question": "Seria care conține DOAR adverbe este: [Sursa 26]",
-      "choices": ["aici, acolo, spre, dinspre","altcineva, către, acasă, cândva","orișicând, mereu, prin, la","bineînțeles, posibil, oricând, altundeva"],
-      "answerIndex": 3,
-      "explanation": "Seria indicată conține numai adverbe, în timp ce restul seriilor amestecă adverbe cu prepoziții (spre, dinspre, la, prin)."
-    },
-    {
-      "question": "În propoziția „Tudor are doar optsprezece ani”, folosirea cuvântului evidențiat este corectă deoarece: [Sursa 100]",
-      "choices": ["Nu are funcție sintactică și stă lângă un numeral.","„Doar/numai” se utilizează în construcții afirmative, pe când „decât” cere negație.","Înlocuiește conjuncția „ci”.","Este un adjectiv invariabil."],
-      "answerIndex": 1,
-      "explanation": "Norma literară a limbii române impune folosirea semiadverbelor „doar” sau „numai” pentru limitarea cantitativă în propoziții afirmative."
-    },
-    {
-      "question": "Există un atribut verbal în varianta: [Sursa 26]",
-      "choices": ["Mi-a spus mama că acel volum de poezii este de citit.","Nu am găsit caietul de colorat.","Avem de citit acea carte până joi.","Dorința Anei era de a termina cartea."],
-      "answerIndex": 1,
-      "explanation": "Verbul la supin „de colorat” determină substantivul „caietul” (care caiet?), având funcția de atribut verbal."
-    },
-    {
-      "question": "Substantivul „pădure” se află în cazul genitiv în enunțul: [Sursa 57]",
-      "choices": ["Pădurii îi lipsesc copacii.","Pădurea se întinde pe o suprafață mare.","Îi mulțumesc pădurii pentru aerul curat.","Animalele pădurii sunt sălbatice."],
-      "answerIndex": 3,
-      "explanation": "În expresia „Animalele pădurii”, cuvântul răspunde la întrebarea „ale cui (animale)?”, marcând posesia specifică genitivului."
-    },
-    {
-      "question": "Seria care conține doar verbe scrise corect la modul imperativ, forma negativă, este: [Sursa 49]",
-      "choices": ["Nu creea!, nu agreea!, nu citii!","Nu aduce!, nu spune!, nu ține!","Nu zidi!, nu ieșii!, nu ne plictisi!","Nu duce!, nu zice!, nu face!, nu tăcea!"],
-      "answerIndex": 3,
-      "explanation": "La formarea imperativului negativ, persoana a II-a singular, se folosește negația urmată de verbul la infinitiv (a duce -> nu duce!)."
-    },
-    {
-      "question": "În versul „Râul luciu se-nconvoaie sub copaci ca un balaur” (V. Alecsandri), măsura este de: [Sursa 61]",
-      "choices": ["15 silabe","17 silabe","18 silabe","16 silabe"],
-      "answerIndex": 3,
-      "explanation": "Analizând fonetic versul și unind cuvintele legate prin cratimă (se-n-con-voa-ie), se numără 16 silabe."
-    },
-    {
-      "question": "Subiectul se exprimă printr-un pronume personal de persoana a II-a, numărul plural, în varianta: [Sursa 53]",
-      "choices": ["Voi, stați liniștiți!","Pe voi vă cheamă bunica la masă?","La voi nu mai venim niciodată.","Nu știu când ați scris voi pe grupul clasei."],
-      "answerIndex": 3,
-      "explanation": "În ultima variantă, pronumele „voi” răspunde la întrebarea „cine (ați scris)?”, având astfel funcția de subiect."
-    }
-  ];
+        <button id="loadSampleBtn" class="primary">Load sample</button>
+        <button id="shuffleBtn" class="success" disabled>Shuffle</button>
+      </div>
+    </section>
 
-  const app = document.getElementById("app");
-  const qCounter = document.getElementById("qCounter");
-  const timeBar = document.getElementById("timeBar");
-  const timerBadge = document.getElementById("timerBadge");
-  const progressWrap = document.getElementById("progressWrap");
+    <section class="main">
+      <aside class="card sidebar">
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-label">Cards loaded</div>
+            <div id="cardsLoaded" class="stat-value">0</div>
+          </div>
 
-  // === CERINȚĂ QUIZZ ROMÂNĂ: 2 minute / întrebare ===
-  // (aceleași cerințe ca paginile anterioare de română)
-  const TIME_PER_Q = 2 * 60; // sec
-  let idx = 0;
-  let score = 0;
-  let timer = null;
-  let remaining = TIME_PER_Q;
-  let locked = false;
+          <div class="stat">
+            <div class="stat-label">Current card</div>
+            <div id="currentCardStat" class="stat-value">0 / 0</div>
+          </div>
 
-  function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+          <div class="stat">
+            <div class="stat-label">Progress</div>
+            <div class="progress"><div id="progressBar" class="progress-bar"></div></div>
+            <div id="progressText" class="small" style="margin-top:10px;">0%</div>
+          </div>
 
-  function grade1to10(correct, total) {
-    if (total <= 0) return 1;
-    const ratio = correct / total;
-    const g = 1 + ratio * 9; // 0% -> 1, 100% -> 10
-    return Math.round(g * 100) / 100;
-  }
+          <div class="stat">
+            <div class="stat-label">Expected CSV format</div>
+            <div class="small">
+              Use 2 columns: <code class="inline">question,answer</code><br /><br />
+              Header row is optional. The first two columns are used.
+            </div>
+          </div>
+        </div>
+      </aside>
 
-  function stopTimer(){
-    if (timer) { clearInterval(timer); timer = null; }
-  }
+      <section class="card viewer">
+        <div id="emptyState" class="empty">
+          Upload a CSV file or click <strong>Load sample</strong> to start.<br /><br />
+          Example:<br />
+          <code class="inline">What is the capital of France?,Paris</code>
+        </div>
 
-  function escapeHtml(s){
-    return String(s)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
+        <div id="flashcardApp" class="flashcard-shell" style="display:none;">
+          <div class="timer-wrap">
+            <div id="cardLabel">Card 1</div>
+            <div id="timerPill" class="timer-pill">30s</div>
+          </div>
 
-  function formatText(raw) {
-    return escapeHtml(raw);
-  }
+          <div id="flashcard" class="flashcard">
+            <div class="flashcard-inner">
+              <div class="face front">
+                <div class="face-tag">Question</div>
+                <div id="questionText" class="face-text"></div>
+              </div>
+              <div class="face back">
+                <div class="face-tag">Answer</div>
+                <div id="answerText" class="face-text"></div>
+              </div>
+            </div>
+          </div>
 
-  function fmtTime(seconds){
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
-  }
+          <div class="controls">
+            <button id="prevBtn">Previous</button>
+            <button id="flipBtn" class="primary">Flip card</button>
+            <button id="nextBtn">Next</button>
+            <button id="restartTimerBtn">Restart timer</button>
+            <button id="autoFlipBtn" class="warn">Auto-flip: Off</button>
+          </div>
 
-  function startTimer(){
-    stopTimer();
-    remaining = TIME_PER_Q;
+          <div class="small">
+            Keyboard: <code class="inline">Space</code> flip,
+            <code class="inline">→</code> next,
+            <code class="inline">←</code> previous,
+            <code class="inline">R</code> restart timer.
+          </div>
+        </div>
+      </section>
+    </section>
+  </div>
 
-    progressWrap.style.display = "block";
-    timerBadge.innerHTML = `⏳ Timp rămas: <span id="timeLeft">${fmtTime(remaining)}</span>`;
-    timeBar.style.width = "100%";
+  <script>
+    const sampleCsv = `question,answer
+What is the capital of France?,Paris
+What is 7 x 8?,56
+What language runs in the browser?,JavaScript
+What is the largest planet in our solar system?,Jupiter`;
 
-    timer = setInterval(() => {
-      remaining -= 1;
-      const tl = document.getElementById("timeLeft");
-      if (tl) tl.textContent = fmtTime(Math.max(remaining, 0));
+    const state = {
+      cards: [],
+      currentIndex: 0,
+      flipped: false,
+      timerSeconds: 30,
+      timeLeft: 30,
+      intervalId: null,
+      autoFlip: false,
+    };
 
-      const pct = (remaining / TIME_PER_Q) * 100;
-      timeBar.style.width = clamp(pct, 0, 100) + "%";
+    const csvFile = document.getElementById('csvFile');
+    const separator = document.getElementById('separator');
+    const timerSecondsInput = document.getElementById('timerSeconds');
+    const loadSampleBtn = document.getElementById('loadSampleBtn');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const flipBtn = document.getElementById('flipBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const restartTimerBtn = document.getElementById('restartTimerBtn');
+    const autoFlipBtn = document.getElementById('autoFlipBtn');
 
-      if (remaining <= 0) {
-        stopTimer();
-        revealAnswer(null, true);
+    const cardsLoaded = document.getElementById('cardsLoaded');
+    const currentCardStat = document.getElementById('currentCardStat');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const emptyState = document.getElementById('emptyState');
+    const flashcardApp = document.getElementById('flashcardApp');
+    const cardLabel = document.getElementById('cardLabel');
+    const timerPill = document.getElementById('timerPill');
+    const flashcard = document.getElementById('flashcard');
+    const questionText = document.getElementById('questionText');
+    const answerText = document.getElementById('answerText');
+
+    function parseCsvLine(line, sep) {
+      const result = [];
+      let current = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const next = line[i + 1];
+
+        if (char === '"') {
+          if (inQuotes && next === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === sep && !inQuotes) {
+          result.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
       }
-    }, 1000);
-  }
 
-  function renderQuestion(){
-    locked = false;
-    const q = questions[idx];
-    qCounter.textContent = `Întrebarea ${idx + 1} / ${questions.length}`;
+      result.push(current.trim());
+      return result;
+    }
 
-    app.innerHTML = `
-      <h2>${formatText(q.question)}</h2>
-      <div class="choices">
-        ${q.choices.map((c, i) => `
-          <label class="choice">
-            <input type="radio" name="choice" value="${i}">
-            <span>${formatText(c)}</span>
-          </label>
-        `).join("")}
-      </div>
-      <div class="row">
-        <button class="primary" id="submitBtn">Trimite răspuns</button>
-        <button id="skipBtn">Nu știu / sari</button>
-      </div>
-      <div id="feedback"></div>
-      <div class="footer small muted">
-        <div>Scor curent: <b id="scoreNow">${score}</b> / ${questions.length}</div>
-        <div>Timp / întrebare: <code>${fmtTime(TIME_PER_Q)}</code></div>
-      </div>
-    `;
+    function parseCsv(text, sep) {
+      const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+      const lines = normalized.split('\n').filter(line => line.trim() !== '');
+      if (!lines.length) return [];
 
-    document.getElementById("submitBtn").onclick = () => {
-      if (locked) return;
-      const picked = app.querySelector('input[name="choice"]:checked');
-      if (!picked) {
-        document.getElementById("feedback").innerHTML = `<div class="result">Alege un răspuns înainte să trimiți.</div>`;
+      const rows = lines.map(line => parseCsvLine(line, sep));
+      let startIndex = 0;
+
+      if (rows[0][0] && rows[0][1]) {
+        const first = rows[0][0].toLowerCase();
+        const second = rows[0][1].toLowerCase();
+        if (
+          ['question', 'front', 'prompt', 'q'].includes(first) &&
+          ['answer', 'back', 'response', 'a'].includes(second)
+        ) {
+          startIndex = 1;
+        }
+      }
+
+      return rows
+        .slice(startIndex)
+        .filter(row => row.length >= 2 && (row[0] || row[1]))
+        .map(row => ({ question: row[0] || '', answer: row[1] || '' }));
+    }
+
+    function stopTimer() {
+      if (state.intervalId) {
+        clearInterval(state.intervalId);
+        state.intervalId = null;
+      }
+    }
+
+    function startTimer() {
+      stopTimer();
+      state.timerSeconds = Math.max(5, Number(timerSecondsInput.value) || 30);
+      state.timeLeft = state.timerSeconds;
+      updateTimerUI();
+
+      state.intervalId = setInterval(() => {
+        state.timeLeft -= 1;
+        updateTimerUI();
+
+        if (state.timeLeft <= 0) {
+          stopTimer();
+          if (state.autoFlip && !state.flipped) {
+            toggleFlip(true);
+          }
+        }
+      }, 1000);
+    }
+
+    function updateTimerUI() {
+      timerPill.textContent = `${Math.max(0, state.timeLeft)}s`;
+      timerPill.classList.toggle('done', state.timeLeft <= 0);
+    }
+
+    function updateStats() {
+      const total = state.cards.length;
+      const current = total ? state.currentIndex + 1 : 0;
+      cardsLoaded.textContent = total;
+      currentCardStat.textContent = `${current} / ${total}`;
+      const percent = total ? Math.round((current / total) * 100) : 0;
+      progressBar.style.width = `${percent}%`;
+      progressText.textContent = `${percent}%`;
+    }
+
+    function renderCard() {
+      const card = state.cards[state.currentIndex];
+      if (!card) return;
+
+      questionText.textContent = card.question;
+      answerText.textContent = card.answer;
+      cardLabel.textContent = `Card ${state.currentIndex + 1} of ${state.cards.length}`;
+      flashcard.classList.toggle('flipped', state.flipped);
+
+      prevBtn.disabled = state.currentIndex === 0;
+      nextBtn.disabled = state.currentIndex === state.cards.length - 1;
+      shuffleBtn.disabled = state.cards.length < 2;
+
+      updateStats();
+      startTimer();
+    }
+
+    function setCards(cards) {
+      state.cards = cards;
+      state.currentIndex = 0;
+      state.flipped = false;
+      emptyState.style.display = cards.length ? 'none' : 'block';
+      flashcardApp.style.display = cards.length ? 'grid' : 'none';
+      if (cards.length) renderCard();
+      else {
+        stopTimer();
+        updateStats();
+      }
+    }
+
+    function toggleFlip(forceValue = null) {
+      state.flipped = forceValue === null ? !state.flipped : forceValue;
+      flashcard.classList.toggle('flipped', state.flipped);
+    }
+
+    function nextCard() {
+      if (state.currentIndex < state.cards.length - 1) {
+        state.currentIndex += 1;
+        state.flipped = false;
+        renderCard();
+      }
+    }
+
+    function prevCard() {
+      if (state.currentIndex > 0) {
+        state.currentIndex -= 1;
+        state.flipped = false;
+        renderCard();
+      }
+    }
+
+    function shuffleCards() {
+      for (let i = state.cards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [state.cards[i], state.cards[j]] = [state.cards[j], state.cards[i]];
+      }
+      state.currentIndex = 0;
+      state.flipped = false;
+      renderCard();
+    }
+
+    async function loadFromFile(file) {
+      const text = await file.text();
+      const sep = separator.value === '\t' ? '\t' : separator.value;
+      const cards = parseCsv(text, sep);
+      if (!cards.length) {
+        alert('No flashcards found. Please make sure your CSV has at least 2 columns.');
         return;
       }
-      revealAnswer(Number(picked.value), false);
-    };
+      setCards(cards);
+    }
 
-    document.getElementById("skipBtn").onclick = () => {
-      if (locked) return;
-      revealAnswer(null, false);
-    };
+    csvFile.addEventListener('change', async (event) => {
+      const file = event.target.files?.[0];
+      if (file) await loadFromFile(file);
+    });
 
-    startTimer();
-  }
+    loadSampleBtn.addEventListener('click', () => {
+      const sep = separator.value === '\t' ? '\t' : separator.value;
+      setCards(parseCsv(sampleCsv, sep));
+    });
 
-  function revealAnswer(selectedIndex, timedOut){
-    locked = true;
-    stopTimer();
+    shuffleBtn.addEventListener('click', shuffleCards);
+    flipBtn.addEventListener('click', () => toggleFlip());
+    nextBtn.addEventListener('click', nextCard);
+    prevBtn.addEventListener('click', prevCard);
+    restartTimerBtn.addEventListener('click', startTimer);
 
-    const q = questions[idx];
-    const correct = q.answerIndex;
-    const isCorrect = (selectedIndex === correct);
+    autoFlipBtn.addEventListener('click', () => {
+      state.autoFlip = !state.autoFlip;
+      autoFlipBtn.textContent = `Auto-flip: ${state.autoFlip ? 'On' : 'Off'}`;
+    });
 
-    if (isCorrect) score += 1;
+    timerSecondsInput.addEventListener('change', () => {
+      if (state.cards.length) startTimer();
+    });
 
-    const pickedText = (selectedIndex === null)
-      ? (timedOut ? "⏰ Timpul a expirat." : "Ai sărit întrebarea.")
-      : `Ai ales: <b>${formatText(q.choices[selectedIndex])}</b>`;
+    flashcard.addEventListener('click', () => toggleFlip());
 
-    const status = isCorrect ? "✅ Corect" : "❌ Greșit";
-    const boxClass = isCorrect ? "result ok" : "result bad";
+    window.addEventListener('keydown', (event) => {
+      if (!state.cards.length) return;
+      if (['INPUT', 'SELECT'].includes(document.activeElement.tagName)) return;
 
-    document.getElementById("feedback").innerHTML = `
-      <div class="${boxClass}">
-        <div style="font-size:16px; margin-bottom:6px;"><b>${status}</b></div>
-        <div>${pickedText}</div>
-        <div style="margin-top:8px;">
-          Răspuns corect: <b>${formatText(q.choices[correct])}</b>
-        </div>
-        <div style="margin-top:8px; opacity:.9">
-          Explicație: ${formatText(q.explanation || "(fără explicație)")}
-        </div>
-      </div>
-      <div class="row" style="margin-top:10px;">
-        <button class="primary" id="nextBtn">${idx < questions.length - 1 ? "Următoarea întrebare" : "Vezi rezultatul final"}</button>
-      </div>
-    `;
+      if (event.code === 'Space') {
+        event.preventDefault();
+        toggleFlip();
+      } else if (event.key === 'ArrowRight') {
+        nextCard();
+      } else if (event.key === 'ArrowLeft') {
+        prevCard();
+      } else if (event.key.toLowerCase() === 'r') {
+        startTimer();
+      }
+    });
 
-    const scoreNow = document.getElementById("scoreNow");
-    if (scoreNow) scoreNow.textContent = score;
-
-    document.getElementById("nextBtn").onclick = () => {
-      idx += 1;
-      if (idx < questions.length) renderQuestion();
-      else renderFinal();
-    };
-  }
-
-  function renderFinal(){
-    stopTimer();
-    qCounter.textContent = "Final";
-    timerBadge.innerHTML = `⏳ Timp rămas: <span id="timeLeft">—</span>`;
-    progressWrap.style.display = "none";
-
-    const total = questions.length;
-    const nota = grade1to10(score, total);
-
-    app.innerHTML = `
-      <h2>Rezultat final</h2>
-      <div class="result ok">
-        <div>Răspunsuri corecte: <b>${score}</b> / <b>${total}</b></div>
-        <div style="margin-top:8px;">Notă: <b>${nota}</b> / 10</div>
-      </div>
-      <div class="row" style="margin-top:12px;">
-        <button class="primary" id="restartBtn">Reîncepe quiz-ul</button>
-      </div>
-      <p class="small muted" style="margin-top:10px;">
-        Notarea este proporțională: 0% = 1, 100% = 10.
-      </p>
-    `;
-
-    document.getElementById("restartBtn").onclick = () => {
-      idx = 0;
-      score = 0;
-      renderQuestion();
-    };
-  }
-
-  renderQuestion();
-</script>
-
+    updateStats();
+  </script>
 </body>
 </html>
