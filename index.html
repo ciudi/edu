@@ -1,292 +1,875 @@
-<!doctype html>
-<html lang="ro">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Test Matematică</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flashcard Challenge Game</title>
   <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; max-width: 980px; margin: 24px auto; padding: 0 16px; }
-    .topbar { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
-    .badge { display:inline-block; padding:6px 10px; border:1px solid #ddd; border-radius:999px; font-size:14px; }
-    .card { border:1px solid #e5e5e5; border-radius:14px; padding:16px; margin:14px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
-    h1 { margin: 0 0 10px; font-size: 22px; }
-    h2 { margin: 0 0 10px; font-size: 18px; line-height: 1.35; }
-    .choices { margin: 10px 0; }
-    .choice { display:flex; gap:10px; padding:10px; border:1px solid #eee; border-radius:12px; margin:8px 0; cursor:pointer; }
-    .choice:hover { background: #fafafa; }
-    .choice input { margin-top: 3px; }
-    button { padding:10px 14px; border-radius:12px; border:1px solid #ddd; background:white; cursor:pointer; font-weight:600; }
-    button:hover { background:#f6f6f6; }
-    button.primary { background:#111; color:#fff; border-color:#111; }
-    button.primary:hover { background:#222; }
-    .row { display:flex; gap:10px; flex-wrap:wrap; }
-    .muted { opacity:.75; }
-    .result { padding: 12px; border-radius: 12px; border: 1px solid #e9e9e9; background: #fbfbfb; margin-top: 12px; }
-    .ok { border-color: #cfead6; background: #f3fbf5; }
-    .bad { border-color: #ffd0d0; background: #fff5f5; }
-    .timer { font-variant-numeric: tabular-nums; }
-    .progress { height: 10px; background: #eee; border-radius: 999px; overflow:hidden; margin-top: 10px; }
-    .progress > div { height:100%; width:0%; background:#111; transition: width .2s linear; }
-    .footer { margin-top: 18px; display:flex; justify-content:space-between; gap: 12px; flex-wrap:wrap; }
-    .small { font-size: 13px; }
-    code { background:#f6f6f6; padding:2px 6px; border-radius:8px; }
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-2: #22c55e;
+      --danger: #f97316;
+      --border: rgba(255,255,255,0.1);
+      --shadow: 0 20px 50px rgba(0,0,0,0.35);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(56,189,248,0.18), transparent 25%),
+        radial-gradient(circle at top left, rgba(34,197,94,0.15), transparent 20%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      gap: 20px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .header {
+      padding: 24px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .title {
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr auto auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    input[type="file"], input[type="number"], select, button {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      transition: 0.18s ease;
+      font-weight: 700;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .primary { background: rgba(56,189,248,0.16); }
+    .success { background: rgba(34,197,94,0.16); }
+    .warn { background: rgba(249,115,22,0.16); }
+
+    .main {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 20px;
+    }
+
+    .sidebar, .viewer {
+      padding: 20px;
+    }
+
+    .stats {
+      display: grid;
+      gap: 12px;
+    }
+
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 1.35rem;
+      font-weight: 800;
+    }
+
+    .hero-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .hero-chip {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .hero-chip .label {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 6px;
+    }
+
+    .hero-chip .value {
+      font-size: 1.35rem;
+      font-weight: 800;
+    }
+
+    .xp-track {
+      margin-top: 10px;
+      height: 10px;
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .xp-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f59e0b, #22c55e);
+      transition: width 0.25s ease;
+    }
+
+    .challenge-banner {
+      border: 1px solid var(--border);
+      background: linear-gradient(90deg, rgba(249,115,22,0.14), rgba(56,189,248,0.1));
+      border-radius: 18px;
+      padding: 14px 16px;
+      font-weight: 700;
+    }
+
+    .answer-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .good { background: rgba(34,197,94,0.18); }
+    .meh { background: rgba(250,204,21,0.14); }
+    .bad { background: rgba(239,68,68,0.14); }
+
+    .summary-box {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: rgba(255,255,255,0.03);
+      padding: 20px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .progress {
+      height: 14px;
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width 0.25s ease;
+    }
+
+    .flashcard-shell {
+      display: grid;
+      gap: 16px;
+    }
+
+    .timer-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .timer-pill {
+      min-width: 88px;
+      text-align: center;
+      font-weight: 800;
+      color: white;
+      background: rgba(56,189,248,0.15);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: 999px;
+    }
+
+    .timer-pill.done {
+      background: rgba(249,115,22,0.18);
+    }
+
+    .flashcard {
+      min-height: 360px;
+      perspective: 1200px;
+    }
+
+    .flashcard-inner {
+      position: relative;
+      width: 100%;
+      min-height: 360px;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .flashcard.flipped .flashcard-inner {
+      transform: rotateY(180deg);
+    }
+
+    .face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .face.back {
+      transform: rotateY(180deg);
+      background: linear-gradient(180deg, rgba(56,189,248,0.06), rgba(34,197,94,0.06));
+    }
+
+    .face-tag {
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+
+    .face-text {
+      font-size: clamp(1.2rem, 2vw, 2rem);
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .empty {
+      padding: 32px;
+      border: 1px dashed var(--border);
+      border-radius: 20px;
+      text-align: center;
+      color: var(--muted);
+      background: rgba(255,255,255,0.02);
+    }
+
+    code.inline {
+      background: rgba(255,255,255,0.08);
+      padding: 2px 8px;
+      border-radius: 8px;
+      color: #dbeafe;
+    }
+
+    @media (max-width: 900px) {
+      .toolbar, .main, .hero-row, .summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    }
   </style>
 </head>
 <body>
+  <div class="container">
+    <section class="card header">
+      <div>
+        <h1 class="title">Flashcard Challenge Game</h1>
+        <p class="subtitle">
+          Turn your CSV into a timed challenge with points, streaks, XP, levels, combo bonuses,
+          and a race against the clock. Think first, reveal the card, then rate how you did.
+        </p>
+      </div>
 
-<h1>Test Matematică</h1>
+      <div class="toolbar">
+        <div class="field">
+          <label for="csvFile">CSV file</label>
+          <input id="csvFile" type="file" accept=".csv,text/csv" />
+        </div>
 
-<div class="topbar">
-  <div class="badge" id="qCounter">Întrebarea 1 / 1</div>
-  <div class="badge timer" id="timerBadge">⏳ Timp rămas: <span id="timeLeft">02:00</span></div>
-</div>
-<div class="progress" id="progressWrap"><div id="timeBar"></div></div>
+        <div class="field">
+          <label for="separator">Separator</label>
+          <select id="separator">
+            <option value=",">Comma</option>
+            <option value=";">Semicolon</option>
+            <option value="\t">Tab</option>
+          </select>
+        </div>
 
-<div id="app" class="card"></div>
+        <div class="field">
+          <label for="timerSeconds">Thinking timer (seconds)</label>
+          <input id="timerSeconds" type="number" min="5" max="300" value="30" />
+        </div>
 
-<script>
-  // === Întrebări (JSON-ul tău) ===
-  const questions = [
-    { "question": "Rezultatul calculului 4 + 12 : 2 este egal cu:", "choices": ["6","8","10","12"], "answerIndex": 2, "explanation": "Respectând ordinea efectuării operațiilor, calculăm mai întâi împărțirea: 12 : 2 = 6, apoi adunarea: 4 + 6 = 10." },
-    { "question": "Dacă a / 2 = 3 / 2, atunci valoarea fracției 4 / a este egală cu:", "choices": ["1/3","4/3","2","3"], "answerIndex": 1, "explanation": "Din egalitatea a / 2 = 3 / 2 deducem direct că a = 3. Înlocuind în expresie, rezultă 4 / 3." },
-    { "question": "Rezultatul calculului 2026 - 12 : 12 este:", "choices": ["-1","0","2025","2026"], "answerIndex": 2, "explanation": "Împărțirea se efectuează prima: 12 : 12 = 1. Apoi scăderea dă 2026 - 1 = 2025." },
-    { "question": "Dacă 25% dintr-un număr a este 30, atunci 30% din același număr a este:", "choices": ["25","40","24","36"], "answerIndex": 3, "explanation": "Dacă 25% din a este 30, numărul a este 30 * 4 = 120. Calculând 30% din 120, obținem (30/100) * 120 = 36." },
-    { "question": "Media aritmetică a numerelor a = √12 și b = 4 - 2√3 este:", "choices": ["4√3","2","4","4 + 4√3"], "answerIndex": 1, "explanation": "Deoarece √12 = 2√3, media aritmetică este (2√3 + 4 - 2√3) / 2 = 4 / 2 = 2." },
-    { "question": "Rezultatul calculului (30 + 4 * 5) : 10 este egal cu:", "choices": ["17","5","23","32"], "answerIndex": 1, "explanation": "Calculăm mai întâi înmulțirea din paranteză (4 * 5 = 20), obținem 30 + 20 = 50. Apoi 50 : 10 = 5." },
-    { "question": "Triplul numărului 5/7 este egal cu:", "choices": ["15/21","5/21","15/7","8/7"], "answerIndex": 2, "explanation": "Triplul înseamnă înmulțirea cu 3: 3 * (5/7) = 15/7." },
-    { "question": "Două treimi din numărul a este egal cu 24. Numărul a este egal cu:", "choices": ["16","8","12","36"], "answerIndex": 3, "explanation": "Ecuația este (2/3) * a = 24. Înmulțind cu 3 și împărțind la 2, obținem a = (24 * 3) / 2 = 36." },
-    { "question": "Dintre numerele 5/13, 5/23, 5/33 și 5/43, cel mai mare este:", "choices": ["5/13","5/23","5/33","5/43"], "answerIndex": 0, "explanation": "Toate fracțiile au același numărător. Fracția cea mai mare este cea cu numitorul cel mai mic, adică 5/13." },
-    { "question": "Numărul care reprezintă 30% din 300 este egal cu:", "choices": ["3","30","90","900"], "answerIndex": 2, "explanation": "Calculul este (30/100) * 300 = 30 * 3 = 90." },
-    { "question": "Dintre numerele √26, 3√3, 5 și 2√6, cel mai mare este numărul:", "choices": ["√26","3√3","5","2√6"], "answerIndex": 1, "explanation": "Introducem factorii sub radical: √26, 3√3 = √27, 5 = √25, 2√6 = √24. Cel mai mare este √27, adică 3√3." },
-    { "question": "Dacă a/3 = 13/2, atunci valoarea raportului (a-3)/3 este:", "choices": ["4,(6)","5","5,5","6,5"], "answerIndex": 2, "explanation": "Raportul (a-3)/3 poate fi despărțit în a/3 - 3/3 = a/3 - 1. Înlocuind a/3 obținem 13/2 - 1 = 6,5 - 1 = 5,5." },
-    { "question": "Fie numerele reale a = 6 - √11 și b = 6 + √11. Diferența dintre media aritmetică și media geometrică a numerelor a și b este:", "choices": ["1","3","5","7"], "answerIndex": 0, "explanation": "Media aritmetică este (6-√11 + 6+√11)/2 = 6. Media geometrică este √((6-√11)(6+√11)) = √(36-11) = √25 = 5. Diferența este 6 - 5 = 1." },
-    { "question": "Știind că x + 3y = 5, unde x și y sunt numere reale, valoarea expresiei 3x + 9y + 12 este:", "choices": ["15","17","24","27"], "answerIndex": 3, "explanation": "Scoatem factor comun 3 din primii doi termeni: 3(x + 3y) + 12. Înlocuind, obținem 3 * 5 + 12 = 15 + 12 = 27." },
-    { "question": "Rezultatul calculului 12 - 2 * 7 este egal cu:", "choices": ["2","-2","0","70"], "answerIndex": 1, "explanation": "Operația de înmulțire este prioritară: 12 - 14 = -2." },
-    { "question": "Media aritmetică a numerelor 10, 20, 30 și 40 este egală cu:", "choices": ["30","25","40","15"], "answerIndex": 1, "explanation": "Suma lor este 100, iar fiind patru numere, le împărțim la 4: 100 / 4 = 25." },
-    { "question": "Cel mai mic număr întreg mai mare decât -3√5 este:", "choices": ["-8","-5","-6","-7"], "answerIndex": 2, "explanation": "-3√5 = -√45. Deoarece √36 < √45 < √49, adică -7 < -√45 < -6, cel mai mic număr întreg mai mare decât -√45 este -6." },
-    { "question": "Dintre fracțiile zecimale 0,126 ; 0,12(6) ; 0,(126) și 0,1(26) cea mai mică este:", "choices": ["0,126","0,12(6)","0,(126)","0,1(26)"], "answerIndex": 0, "explanation": "Analizând zecimalele, avem 0,1260...; 0,1266...; 0,126126...; 0,12626... Cel mai mic număr este cel cu prima cifră a miimilor 0, adică 0,126." },
-    { "question": "Diferența dintre media aritmetică și cea geometrică a numerelor 2+√3 și 2-√3 este egală cu:", "choices": ["1","2","3","4"], "answerIndex": 0, "explanation": "Media aritmetică = (2+√3 + 2-√3)/2 = 2. Media geometrică = √((2+√3)(2-√3)) = √(4-3) = 1. Diferența: 2 - 1 = 1." },
-    { "question": "Dacă a = 3 + √5 și b = 3 - √5, atunci media geometrică a numerelor a și b este egală cu:", "choices": ["3","2","√5","4"], "answerIndex": 1, "explanation": "Media geometrică este √(ab) = √((3+√5)(3-√5)) = √(9-5) = √4 = 2." },
-    {"question": "Fie numerele a = -2,3 și b = 4,13. Dintre numerele a, b, -a și -b, cel mai mic este numărul:","choices": ["a","b","-a","-b"],"answerIndex": 3,"explanation": "Valorile sunt a = -2,3; b = 4,13; -a = 2,3; -b = -4,13. Cel mai mic dintre acestea este -4,13, adică -b."},
-    {"question": "Dacă 30% din numărul a reprezintă 45% din b, atunci valoarea raportului b/a este:","choices": ["0,(6)","0,5","1,2","1,5"],"answerIndex": 0,"explanation": "Avem ecuația 30a = 45*b. Împărțind pentru a obține b/a rezultă 30/45, care simplificat dă 2/3. Transformând în fracție zecimală este 0,(6)."},
-    { "question": "Rezultatul calculului 2025^0 + 2025 : 2025 - 1^2025 + 0^2025 este egal cu:", "choices": ["2025","0","2024","1"], "answerIndex": 3, "explanation": "Avem: 2025^0 = 1; 2025 : 2025 = 1; 1^2025 = 1; 0^2025 = 0. Calculul final devine: 1 + 1 - 1 + 0 = 1." },
-    { "question": "Fie proporția x/y = 5/7. Valoarea expresiei 49x - 35y este egală cu:", "choices": ["0","5/7","7/5","35"], "answerIndex": 0, "explanation": "Din proporție rezultă 7x = 5y, echivalent cu 7x - 5y = 0. Înmulțind totul cu 7, obținem 49x - 35y = 0." },
-    { "question": "Într-o clasă sunt 25 de elevi. 15 elevi joacă handbal, 11 elevi joacă fotbal și 5 elevi nu practică niciun sport. Câți elevi joacă și handbal și fotbal?", "choices": ["6","5","1","8"], "answerIndex": 0, "explanation": "Numărul elevilor care practică măcar un sport este 25 - 5 = 20. Adunând 15 + 11 = 26. Intersecția este 26 - 20 = 6." }
-  ];
+        <button id="loadSampleBtn" class="primary">Load sample</button>
+        <button id="shuffleBtn" class="success" disabled>Shuffle</button>
+      </div>
+    </section>
 
-  const app = document.getElementById("app");
-  const qCounter = document.getElementById("qCounter");
-  const timeBar = document.getElementById("timeBar");
-  const timerBadge = document.getElementById("timerBadge");
-  const progressWrap = document.getElementById("progressWrap");
+    <div class="hero-row">
+      <div class="hero-chip">
+        <div class="label">Score</div>
+        <div id="scoreValue" class="value">0</div>
+      </div>
+      <div class="hero-chip">
+        <div class="label">Streak</div>
+        <div id="streakValue" class="value">0 🔥</div>
+      </div>
+      <div class="hero-chip">
+        <div class="label">Level</div>
+        <div id="levelValue" class="value">1</div>
+        <div class="xp-track"><div id="xpBar" class="xp-bar"></div></div>
+      </div>
+      <div class="hero-chip">
+        <div class="label">Lives</div>
+        <div id="livesValue" class="value">3 ❤️</div>
+      </div>
+    </div>
 
-  // === CERINȚĂ TEST MATEMATICĂ: 2 minute / întrebare,
-  // dar 7 minute pentru întrebări cu figuri geometrice / puncte coliniare / figură alăturată ===
-  const DEFAULT_TIME = 2 * 60;  // 2 min
-  const GEOM_TIME = 7 * 60;     // 7 min
+    <div id="challengeBanner" class="challenge-banner">Load a deck and start building your streak.</div>
 
-  function isGeometryQuestion(text) {
-    const t = (text || "").toLowerCase();
-    const keywords = [
-      "figur", "figura", "alătur", "alatur",
-      "coliniar", "puncte", "segment", "triunghi",
-      "cerc", "romb", "pătrat", "patrat", "paralelogram",
-      "trapez", "cub", "piramid", "diagonal", "unghi", "aria", "perimetr"
-    ];
-    return keywords.some(k => t.includes(k));
-  }
+    <section class="main">
+      <aside class="card sidebar">
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-label">Cards loaded</div>
+            <div id="cardsLoaded" class="stat-value">0</div>
+          </div>
 
-  function timeForQuestion(q) {
-    // dacă se detectează context geometric / figură -> 7 minute, altfel 2 minute
-    return isGeometryQuestion(q.question) ? GEOM_TIME : DEFAULT_TIME;
-  }
+          <div class="stat">
+            <div class="stat-label">Current card</div>
+            <div id="currentCardStat" class="stat-value">0 / 0</div>
+          </div>
 
-  let idx = 0;
-  let score = 0;
-  let timer = null;
-  let remaining = DEFAULT_TIME;
-  let currentLimit = DEFAULT_TIME;
-  let locked = false;
+          <div class="stat">
+            <div class="stat-label">Progress</div>
+            <div class="progress"><div id="progressBar" class="progress-bar"></div></div>
+            <div id="progressText" class="small" style="margin-top:10px;">0%</div>
+          </div>
 
-  function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+          <div class="stat">
+            <div class="stat-label">Game rules</div>
+            <div class="small">
+              Reveal the card after thinking, then grade yourself:<br /><br />
+              <strong>Perfect</strong> = big points + streak<br />
+              <strong>Almost</strong> = smaller reward<br />
+              <strong>Missed</strong> = lose a life<br /><br />
+              Use 2 CSV columns: <code class="inline">question,answer</code>
+            </div>
+          </div>
+        </div>
+      </aside>
 
-  function grade1to10(correct, total) {
-    if (total <= 0) return 1;
-    const ratio = correct / total;
-    const g = 1 + ratio * 9; // 0% -> 1, 100% -> 10
-    return Math.round(g * 100) / 100;
-  }
+      <section class="card viewer">
+        <div id="emptyState" class="empty">
+          Upload a CSV file or click <strong>Load sample</strong> to start.<br /><br />
+          Example:<br />
+          <code class="inline">What is the capital of France?,Paris</code>
+        </div>
 
-  function stopTimer(){
-    if (timer) { clearInterval(timer); timer = null; }
-  }
+        <div id="flashcardApp" class="flashcard-shell" style="display:none;">
+          <div class="timer-wrap">
+            <div id="cardLabel">Card 1</div>
+            <div id="timerPill" class="timer-pill">30s</div>
+          </div>
 
-  function escapeHtml(s){
-    return String(s)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
+          <div id="flashcard" class="flashcard">
+            <div class="flashcard-inner">
+              <div class="face front">
+                <div class="face-tag">Question</div>
+                <div id="questionText" class="face-text"></div>
+              </div>
+              <div class="face back">
+                <div class="face-tag">Answer</div>
+                <div id="answerText" class="face-text"></div>
+              </div>
+            </div>
+          </div>
 
-  function formatText(raw) {
-    // păstrăm simplu; dacă vrei MathJax ulterior, îl putem integra.
-    return escapeHtml(raw);
-  }
+          <div class="controls">
+            <button id="prevBtn">Previous</button>
+            <button id="flipBtn" class="primary">Reveal answer</button>
+            <button id="nextBtn">Skip</button>
+            <button id="restartTimerBtn">Restart timer</button>
+            <button id="autoFlipBtn" class="warn">Auto-reveal: Off</button>
+          </div>
 
-  function fmtTime(seconds){
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
-  }
+          <div id="answerActions" class="answer-actions" style="display:none;">
+            <button id="perfectBtn" class="good">Perfect (+100)</button>
+            <button id="almostBtn" class="meh">Almost (+40)</button>
+            <button id="missedBtn" class="bad">Missed (-1 life)</button>
+          </div>
 
-  function startTimer(){
-    stopTimer();
-    const q = questions[idx];
-    currentLimit = timeForQuestion(q);
-    remaining = currentLimit;
+          <div id="gameSummary" class="summary-box" style="display:none;">
+            <div style="font-size:1.4rem;font-weight:800;">Run complete</div>
+            <div class="summary-grid">
+              <div class="hero-chip"><div class="label">Final score</div><div id="finalScore" class="value">0</div></div>
+              <div class="hero-chip"><div class="label">Best streak</div><div id="bestStreak" class="value">0</div></div>
+              <div class="hero-chip"><div class="label">Cards cleared</div><div id="clearedCount" class="value">0</div></div>
+              <div class="hero-chip"><div class="label">Level reached</div><div id="finalLevel" class="value">1</div></div>
+            </div>
+            <div id="summaryText" class="small"></div>
+            <div class="controls">
+              <button id="playAgainBtn" class="success">Play again</button>
+            </div>
+          </div>
 
-    progressWrap.style.display = "block";
-    timerBadge.innerHTML = `⏳ Timp rămas: <span id="timeLeft">${fmtTime(remaining)}</span>`;
-    timeBar.style.width = "100%";
+          <div class="small">
+            Keyboard: <code class="inline">Space</code> flip,
+            <code class="inline">→</code> next,
+            <code class="inline">←</code> previous,
+            <code class="inline">R</code> restart timer.
+          </div>
+        </div>
+      </section>
+    </section>
+  </div>
 
-    timer = setInterval(() => {
-      remaining -= 1;
-      const tl = document.getElementById("timeLeft");
-      if (tl) tl.textContent = fmtTime(Math.max(remaining, 0));
+  <script>
+    const sampleCsv = `question,answer
+What is the capital of France?,Paris
+What is 7 x 8?,56
+What language runs in the browser?,JavaScript
+What is the largest planet in our solar system?,Jupiter`;
 
-      const pct = (remaining / currentLimit) * 100;
-      timeBar.style.width = clamp(pct, 0, 100) + "%";
+    const state = {
+      cards: [],
+      currentIndex: 0,
+      flipped: false,
+      timerSeconds: 30,
+      timeLeft: 30,
+      intervalId: null,
+      autoFlip: false,
+      score: 0,
+      streak: 0,
+      bestStreak: 0,
+      lives: 3,
+      xp: 0,
+      level: 1,
+      cleared: 0,
+      gameOver: false,
+    };
 
-      if (remaining <= 0) {
-        stopTimer();
-        revealAnswer(null, true);
+    const csvFile = document.getElementById('csvFile');
+    const separator = document.getElementById('separator');
+    const timerSecondsInput = document.getElementById('timerSeconds');
+    const loadSampleBtn = document.getElementById('loadSampleBtn');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const flipBtn = document.getElementById('flipBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const restartTimerBtn = document.getElementById('restartTimerBtn');
+    const autoFlipBtn = document.getElementById('autoFlipBtn');
+
+    const cardsLoaded = document.getElementById('cardsLoaded');
+    const currentCardStat = document.getElementById('currentCardStat');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const emptyState = document.getElementById('emptyState');
+    const flashcardApp = document.getElementById('flashcardApp');
+    const cardLabel = document.getElementById('cardLabel');
+    const timerPill = document.getElementById('timerPill');
+    const flashcard = document.getElementById('flashcard');
+    const questionText = document.getElementById('questionText');
+    const answerText = document.getElementById('answerText');
+    const answerActions = document.getElementById('answerActions');
+    const perfectBtn = document.getElementById('perfectBtn');
+    const almostBtn = document.getElementById('almostBtn');
+    const missedBtn = document.getElementById('missedBtn');
+    const scoreValue = document.getElementById('scoreValue');
+    const streakValue = document.getElementById('streakValue');
+    const levelValue = document.getElementById('levelValue');
+    const livesValue = document.getElementById('livesValue');
+    const xpBar = document.getElementById('xpBar');
+    const challengeBanner = document.getElementById('challengeBanner');
+    const gameSummary = document.getElementById('gameSummary');
+    const finalScore = document.getElementById('finalScore');
+    const bestStreak = document.getElementById('bestStreak');
+    const clearedCount = document.getElementById('clearedCount');
+    const finalLevel = document.getElementById('finalLevel');
+    const summaryText = document.getElementById('summaryText');
+    const playAgainBtn = document.getElementById('playAgainBtn');
+
+    function parseCsvLine(line, sep) {
+      const result = [];
+      let current = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const next = line[i + 1];
+
+        if (char === '"') {
+          if (inQuotes && next === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === sep && !inQuotes) {
+          result.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
       }
-    }, 1000);
-  }
 
-  function renderQuestion(){
-    locked = false;
-    const q = questions[idx];
-    qCounter.textContent = `Întrebarea ${idx + 1} / ${questions.length}`;
+      result.push(current.trim());
+      return result;
+    }
 
-    const perQ = timeForQuestion(q);
+    function parseCsv(text, sep) {
+      const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+      const lines = normalized.split('\n').filter(line => line.trim() !== '');
+      if (!lines.length) return [];
 
-    app.innerHTML = `
-      <h2>${formatText(q.question)}</h2>
-      <div class="choices">
-        ${q.choices.map((c, i) => `
-          <label class="choice">
-            <input type="radio" name="choice" value="${i}">
-            <span>${formatText(c)}</span>
-          </label>
-        `).join("")}
-      </div>
-      <div class="row">
-        <button class="primary" id="submitBtn">Trimite răspuns</button>
-        <button id="skipBtn">Nu știu / sari</button>
-      </div>
-      <div id="feedback"></div>
-      <div class="footer small muted">
-        <div>Scor curent: <b id="scoreNow">${score}</b> / ${questions.length}</div>
-        <div>Timp / întrebare: <code>${fmtTime(perQ)}</code></div>
-      </div>
-    `;
+      const rows = lines.map(line => parseCsvLine(line, sep));
+      let startIndex = 0;
 
-    document.getElementById("submitBtn").onclick = () => {
-      if (locked) return;
-      const picked = app.querySelector('input[name="choice"]:checked');
-      if (!picked) {
-        document.getElementById("feedback").innerHTML = `<div class="result">Alege un răspuns înainte să trimiți.</div>`;
+      if (rows[0][0] && rows[0][1]) {
+        const first = rows[0][0].toLowerCase();
+        const second = rows[0][1].toLowerCase();
+        if (
+          ['question', 'front', 'prompt', 'q'].includes(first) &&
+          ['answer', 'back', 'response', 'a'].includes(second)
+        ) {
+          startIndex = 1;
+        }
+      }
+
+      return rows
+        .slice(startIndex)
+        .filter(row => row.length >= 2 && (row[0] || row[1]))
+        .map(row => ({ question: row[0] || '', answer: row[1] || '' }));
+    }
+
+    function stopTimer() {
+      if (state.intervalId) {
+        clearInterval(state.intervalId);
+        state.intervalId = null;
+      }
+    }
+
+    function startTimer() {
+      stopTimer();
+      state.timerSeconds = Math.max(5, Number(timerSecondsInput.value) || 30);
+      state.timeLeft = state.timerSeconds;
+      updateTimerUI();
+
+      state.intervalId = setInterval(() => {
+        state.timeLeft -= 1;
+        updateTimerUI();
+
+        if (state.timeLeft <= 0) {
+          stopTimer();
+          if (state.autoFlip && !state.flipped) {
+            toggleFlip(true);
+            challengeBanner.textContent = 'Time is up. Reveal happened automatically.';
+          }
+        }
+      }, 1000);
+    }
+
+    function updateTimerUI() {
+      timerPill.textContent = `${Math.max(0, state.timeLeft)}s`;
+      timerPill.classList.toggle('done', state.timeLeft <= 0);
+    }
+
+    function updateStats() {
+      const total = state.cards.length;
+      const current = total ? state.currentIndex + 1 : 0;
+      cardsLoaded.textContent = total;
+      currentCardStat.textContent = `${current} / ${total}`;
+      const percent = total ? Math.round((current / total) * 100) : 0;
+      progressBar.style.width = `${percent}%`;
+      progressText.textContent = `${percent}%`;
+      scoreValue.textContent = state.score;
+      streakValue.textContent = `${state.streak} 🔥`;
+      levelValue.textContent = state.level;
+      livesValue.textContent = `${state.lives} ❤️`;
+      xpBar.style.width = `${state.xp}%`;
+    }
+
+    function renderCard() {
+      const card = state.cards[state.currentIndex];
+      if (!card || state.gameOver) return;
+
+      questionText.textContent = card.question;
+      answerText.textContent = card.answer;
+      cardLabel.textContent = `Card ${state.currentIndex + 1} of ${state.cards.length}`;
+      flashcard.classList.toggle('flipped', state.flipped);
+      answerActions.style.display = state.flipped ? 'flex' : 'none';
+
+      prevBtn.disabled = state.currentIndex === 0;
+      nextBtn.disabled = state.currentIndex === state.cards.length - 1;
+      shuffleBtn.disabled = state.cards.length < 2;
+
+      challengeBanner.textContent = state.streak >= 3
+        ? `Hot streak! ${state.streak} in a row. Keep going for combo rewards.`
+        : 'Think first, then reveal and score yourself honestly.';
+
+      updateStats();
+      startTimer();
+    }
+
+    function resetGameMetrics() {
+      state.currentIndex = 0;
+      state.flipped = false;
+      state.score = 0;
+      state.streak = 0;
+      state.bestStreak = 0;
+      state.lives = 3;
+      state.xp = 0;
+      state.level = 1;
+      state.cleared = 0;
+      state.gameOver = false;
+      gameSummary.style.display = 'none';
+    }
+
+    function setCards(cards) {
+      state.cards = cards;
+      resetGameMetrics();
+      emptyState.style.display = cards.length ? 'none' : 'block';
+      flashcardApp.style.display = cards.length ? 'grid' : 'none';
+      if (cards.length) renderCard();
+      else {
+        stopTimer();
+        updateStats();
+      }
+    }
+
+    function toggleFlip(forceValue = null) {
+      state.flipped = forceValue === null ? !state.flipped : forceValue;
+      flashcard.classList.toggle('flipped', state.flipped);
+      answerActions.style.display = state.flipped ? 'flex' : 'none';
+    }
+
+    function nextCard() {
+      if (state.currentIndex < state.cards.length - 1) {
+        state.currentIndex += 1;
+        state.flipped = false;
+        renderCard();
+      } else {
+        endRun('Deck complete');
+      }
+    }
+
+    function prevCard() {
+      if (state.currentIndex > 0) {
+        state.currentIndex -= 1;
+        state.flipped = false;
+        renderCard();
+      }
+    }
+
+    function shuffleCards() {
+      for (let i = state.cards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [state.cards[i], state.cards[j]] = [state.cards[j], state.cards[i]];
+      }
+      resetGameMetrics();
+      renderCard();
+    }
+
+    function addXp(amount) {
+      state.xp += amount;
+      while (state.xp >= 100) {
+        state.xp -= 100;
+        state.level += 1;
+        state.score += 50;
+        challengeBanner.textContent = `Level up! You reached level ${state.level} and earned a bonus.`;
+      }
+    }
+
+    function scoreAnswer(kind) {
+      if (!state.flipped || state.gameOver) return;
+
+      if (kind === 'perfect') {
+        const combo = state.streak >= 2 ? 20 : 0;
+        state.score += 100 + combo;
+        state.streak += 1;
+        state.bestStreak = Math.max(state.bestStreak, state.streak);
+        state.cleared += 1;
+        addXp(34);
+        challengeBanner.textContent = combo ? `Perfect! Combo bonus +${combo}.` : 'Perfect recall.';
+      } else if (kind === 'almost') {
+        state.score += 40;
+        state.streak += 1;
+        state.bestStreak = Math.max(state.bestStreak, state.streak);
+        state.cleared += 1;
+        addXp(18);
+        challengeBanner.textContent = 'Close enough. Small reward, streak preserved.';
+      } else {
+        state.lives -= 1;
+        state.streak = 0;
+        addXp(5);
+        challengeBanner.textContent = state.lives > 0 ? 'Missed it. Streak reset.' : 'No lives left.';
+      }
+
+      updateStats();
+      if (state.lives <= 0) {
+        endRun('Out of lives');
+      } else {
+        setTimeout(() => nextCard(), 350);
+      }
+    }
+
+    function endRun(reason) {
+      state.gameOver = true;
+      stopTimer();
+      answerActions.style.display = 'none';
+      gameSummary.style.display = 'grid';
+      finalScore.textContent = state.score;
+      bestStreak.textContent = state.bestStreak;
+      clearedCount.textContent = state.cleared;
+      finalLevel.textContent = state.level;
+      summaryText.textContent = `${reason}. You cleared ${state.cleared} card(s) with a best streak of ${state.bestStreak}.`;
+      challengeBanner.textContent = `Run ended: ${reason}. Press Play again for another round.`;
+    }
+
+    async function loadFromFile(file) {
+      const text = await file.text();
+      const sep = separator.value === '\t' ? '\t' : separator.value;
+      const cards = parseCsv(text, sep);
+      if (!cards.length) {
+        alert('No flashcards found. Please make sure your CSV has at least 2 columns.');
         return;
       }
-      revealAnswer(Number(picked.value), false);
-    };
+      setCards(cards);
+    }
 
-    document.getElementById("skipBtn").onclick = () => {
-      if (locked) return;
-      revealAnswer(null, false);
-    };
+    csvFile.addEventListener('change', async (event) => {
+      const file = event.target.files?.[0];
+      if (file) await loadFromFile(file);
+    });
 
-    startTimer();
-  }
+    loadSampleBtn.addEventListener('click', () => {
+      const sep = separator.value === '\t' ? '\t' : separator.value;
+      setCards(parseCsv(sampleCsv, sep));
+    });
 
-  function revealAnswer(selectedIndex, timedOut){
-    locked = true;
-    stopTimer();
+    shuffleBtn.addEventListener('click', shuffleCards);
+    flipBtn.addEventListener('click', () => toggleFlip());
+    nextBtn.addEventListener('click', nextCard);
+    prevBtn.addEventListener('click', prevCard);
+    restartTimerBtn.addEventListener('click', startTimer);
 
-    const q = questions[idx];
-    const correct = q.answerIndex;
-    const isCorrect = (selectedIndex === correct);
+    autoFlipBtn.addEventListener('click', () => {
+      state.autoFlip = !state.autoFlip;
+      autoFlipBtn.textContent = `Auto-reveal: ${state.autoFlip ? 'On' : 'Off'}`;
+    });
 
-    if (isCorrect) score += 1;
+    perfectBtn.addEventListener('click', () => scoreAnswer('perfect'));
+    almostBtn.addEventListener('click', () => scoreAnswer('almost'));
+    missedBtn.addEventListener('click', () => scoreAnswer('missed'));
+    playAgainBtn.addEventListener('click', () => {
+      if (!state.cards.length) return;
+      resetGameMetrics();
+      renderCard();
+    });
 
-    const pickedText = (selectedIndex === null)
-      ? (timedOut ? "⏰ Timpul a expirat." : "Ai sărit întrebarea.")
-      : `Ai ales: <b>${formatText(q.choices[selectedIndex])}</b>`;
+    timerSecondsInput.addEventListener('change', () => {
+      if (state.cards.length) startTimer();
+    });
 
-    const status = isCorrect ? "✅ Corect" : "❌ Greșit";
-    const boxClass = isCorrect ? "result ok" : "result bad";
+    flashcard.addEventListener('click', () => toggleFlip());
 
-    document.getElementById("feedback").innerHTML = `
-      <div class="${boxClass}">
-        <div style="font-size:16px; margin-bottom:6px;"><b>${status}</b></div>
-        <div>${pickedText}</div>
-        <div style="margin-top:8px;">
-          Răspuns corect: <b>${formatText(q.choices[correct])}</b>
-        </div>
-        <div style="margin-top:8px; opacity:.9">
-          Explicație: ${formatText(q.explanation || "(fără explicație)")}
-        </div>
-      </div>
-      <div class="row" style="margin-top:10px;">
-        <button class="primary" id="nextBtn">${idx < questions.length - 1 ? "Următoarea întrebare" : "Vezi rezultatul final"}</button>
-      </div>
-    `;
+    window.addEventListener('keydown', (event) => {
+      if (!state.cards.length) return;
+      if (['INPUT', 'SELECT'].includes(document.activeElement.tagName)) return;
 
-    const scoreNow = document.getElementById("scoreNow");
-    if (scoreNow) scoreNow.textContent = score;
+      if (event.code === 'Space') {
+        event.preventDefault();
+        toggleFlip();
+      } else if (event.key === 'ArrowRight') {
+        nextCard();
+      } else if (event.key === 'ArrowLeft') {
+        prevCard();
+      } else if (event.key.toLowerCase() === 'r') {
+        startTimer();
+      }
+    });
 
-    document.getElementById("nextBtn").onclick = () => {
-      idx += 1;
-      if (idx < questions.length) renderQuestion();
-      else renderFinal();
-    };
-  }
-
-  function renderFinal(){
-    stopTimer();
-    qCounter.textContent = "Final";
-    timerBadge.innerHTML = `⏳ Timp rămas: <span id="timeLeft">—</span>`;
-    progressWrap.style.display = "none";
-
-    const total = questions.length;
-    const nota = grade1to10(score, total);
-
-    app.innerHTML = `
-      <h2>Rezultat final</h2>
-      <div class="result ok">
-        <div>Răspunsuri corecte: <b>${score}</b> / <b>${total}</b></div>
-        <div style="margin-top:8px;">Notă: <b>${nota}</b> / 10</div>
-      </div>
-      <div class="row" style="margin-top:12px;">
-        <button class="primary" id="restartBtn">Reîncepe testul</button>
-      </div>
-      <p class="small muted" style="margin-top:10px;">
-        Notarea este proporțională: 0% = 1, 100% = 10.
-      </p>
-    `;
-
-    document.getElementById("restartBtn").onclick = () => {
-      idx = 0;
-      score = 0;
-      renderQuestion();
-    };
-  }
-
-  renderQuestion();
-</script>
-
+    updateStats();
+  </script>
 </body>
 </html>
