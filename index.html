@@ -30,6 +30,11 @@
     .footer { margin-top: 18px; display:flex; justify-content:space-between; gap: 12px; flex-wrap:wrap; }
     .small { font-size: 13px; }
     code { background:#f6f6f6; padding:2px 6px; border-radius:8px; }
+    a { color: #0b57d0; text-decoration: underline; }
+    a:hover { opacity: .85; }
+
+    /* cerință română: textul dintre ** ** -> bold + underline */
+    .emph { font-weight: 700; text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -38,164 +43,288 @@
 
 <div class="topbar">
   <div class="badge" id="qCounter">Întrebarea 1 / 1</div>
-  <div class="badge timer" id="timerBadge">⏳ Timp rămas: <span id="timeLeft">02:00</span></div>
+  <div class="badge timer" id="timerBadge">⏳ Timp rămas: <span id="timeLeft">00:30</span></div>
 </div>
 <div class="progress" id="progressWrap"><div id="timeBar"></div></div>
 
 <div id="app" class="card"></div>
 
 <script>
-  // === Întrebări (JSON-ul tău) ===
   const questions = [
     {
-      "question": "Litera „x” se pronunță [gz] în toate cuvintele din seria: [Sursa 47]",
-      "choices": ["excursie, examen, mixer","examina, exil, exactitate","dexteritate, taximetrist, flexiune","malaxor, xilofon, axiomă"],
+      "question": "Ce reprezintă „cuvintele-cheie” într-un text liric, conform fișei de studiu? [Sursa 188]",
+      "choices": [
+        "Doar titlul poeziei",
+        "Elementele repetate sau asupra cărora se concentrează discursul poetic",
+        "Substantivele proprii dintr-o operă",
+        "Verbele folosite la modul imperativ"
+      ],
       "answerIndex": 1,
-      "explanation": "Conform regulilor fonetice și fișelor de exerciții, când „x” este flancat de vocale în cuvinte precum „examen”, „exil” sau „exactitate”, se pronunță [gz]."
+      "explanation": "Conform teoriei literare din surse, cuvintele-cheie reprezintă termenii esențiali, adesea repetați, în jurul cărora se construiește și se concentrează mesajul discursului liric."
     },
     {
-      "question": "Câți diftongi sunt în versul: „Când din culme-n culme noaptea buciumele răsunau...” (V. Alecsandri)? [Sursa 47]",
-      "choices": ["Cinci diftongi","Patru diftongi","Trei diftongi","Doi diftongi"],
+      "question": "În care dintre următoarele serii numărul de litere este egal cu numărul de sunete? [Sursa 26]",
+      "choices": [
+        "chitară, cinema, ceva, oricine",
+        "ghete, frânghie, măceșe, circul",
+        "ceară, ceai, lux, pixuri",
+        "cisternă, agenție, ager, cerceluș"
+      ],
+      "answerIndex": 3,
+      "explanation": "În cuvintele din ultima serie, grupurile „ci”, „ge”, „ce” sunt urmate direct de consoane sau sunt pronunțate integral cu vocalele lor (fără litere ajutătoare), astfel numărul de litere coincide cu cel al sunetelor."
+    },
+    {
+      "question": "Funcția sintactică a substantivului evidențiat din enunțul „Aceia sunt **prieteni** de foarte mulți ani” este: [Sursa 55]",
+      "choices": [
+        "Complement direct",
+        "Nume predicativ",
+        "Subiect",
+        "Circumstanțial de mod"
+      ],
+      "answerIndex": 1,
+      "explanation": "Verbul „sunt” este copulativ, iar substantivul „prieteni” face legătura cu acesta pentru a exprima o caracteristică a subiectului, îndeplinind funcția de nume predicativ."
+    },
+    {
+      "question": "În propoziția „Întrebarea **dacă va veni și el la teatru** mă enervează”, subordonata evidențiată este: [Sursa 30]",
+      "choices": [
+        "Completivă directă",
+        "Atributivă",
+        "Subiectivă",
+        "Completivă indirectă"
+      ],
+      "answerIndex": 1,
+      "explanation": "Deși este introdusă prin conjuncția „dacă” (specifică uneori completivelor), subordonata determină substantivul regent „Întrebarea” (Care întrebare?), fiind astfel atributivă."
+    },
+    {
+      "question": "Există un complement prepozițional în varianta: [Sursa 18]",
+      "choices": [
+        "Cearta cu vecinul mi-a făcut rău.",
+        "Discuția cu mama m-a ajutat.",
+        "Necazul s-a năpustit asupra oamenilor.",
+        "Discuția despre pinguini a fost plăcută."
+      ],
       "answerIndex": 2,
-      "explanation": "Diftongii se găsesc în cuvintele „noaptea” (oa, ea) și „răsunau” (au). În total sunt trei diftongi."
+      "explanation": "În varianta C, „asupra oamenilor” determină verbul „s-a năpustit” (asupra cui?), fiind complement prepozițional. În restul variantelor, grupurile prepoziționale determină substantive, fiind atribute."
     },
     {
-      "question": "Identificați seria în care se stabilește o relație de omonimie: [Sursa 45]",
-      "choices": ["Și-a făcut o casă mare. / Văd că nu și-a făcut tema.","Copilul sare gardul. / Mama va pune sare în mâncare.","Copiii vorbesc cam tare. / Ionel va fi mereu un om tare.","Copilul a trecut de examen. / Trandafirii bunicii s-au trecut."],
-      "answerIndex": 1,
-      "explanation": "Cuvintele „sare” (verb) și „sare” (substantiv) au aceeași formă, dar sensuri și apartenențe morfologice complet diferite, fiind omonime."
-    },
-    {
-      "question": "Câte predicate sunt în versurile: „Din oglindă mă privea un trup firav / Cu claviatura coastelor distinctă, / Inima-apăsa pe clape grav / Și-ncerca să-apară în oglindă.”? [Sursa 53]",
-      "choices": ["Patru predicate","Trei predicate","Două predicate","Cinci predicate"],
+      "question": "Care serie conține DOAR cuvinte din câmpul lexical al școlii? [Sursa 59]",
+      "choices": [
+        "bancă, manual, profesor",
+        "creion, școlar, perete",
+        "bancă, bani, bunătate",
+        "director, directoare, curte"
+      ],
       "answerIndex": 0,
-      "explanation": "Predicatele sunt exprimate prin cele patru verbe predicative din fragment: „privea”, „-apăsa”, „-ncerca” și „să-apară”."
+      "explanation": "Câmpul lexical cuprinde cuvintele care aparțin aceluiași domeniu de semnificație. Bancă, manual și profesor se încadrează logic în sfera semantică a școlii."
     },
     {
-      "question": "Adjectivul are funcția sintactică de nume predicativ în enunțul: [Sursa 19]",
-      "choices": ["Aura a rămas o fată frumoasă.","Copiii par foarte fericiți astăzi.","Ionel a ajuns un medic extraordinar.","Fata va fi cea mai bună patinatoare."],
-      "answerIndex": 1,
-      "explanation": "Verbul copulativ „par” se leagă de adjectivul „fericiți”, care devine astfel nume predicativ și formează predicatul nominal."
-    },
-    {
-      "question": "Există un subiect neexprimat, INCLUS, în enunțul: [Sursa 85]",
-      "choices": ["Să pleci mai repede!","Au sosit ieri seara.","Plouă torențial.","Veniți la noi!"],
+      "question": "Verbul „a avea” are valoare de auxiliar în propoziția: [Sursa 51]",
+      "choices": [
+        "Nu au citit cartea, însă o vor citi.",
+        "Vreau să fii mai implicat.",
+        "Oare vor afla ce s-a întâmplat?",
+        "Ar avea mai mult timp liber."
+      ],
       "answerIndex": 0,
-      "explanation": "Subiectul este inclus în desinența verbului la persoana a II-a singular: „(tu) să pleci”."
+      "explanation": "În structura „au citit”, verbul „a avea” (forma „au”) își pierde sensul de bază de a poseda și ajută doar la formarea timpului perfect compus al verbului „a citi”."
     },
     {
-      "question": "Funcția sintactică a cuvântului evidențiat din enunțul „Mașina de acolo este frumoasă” este: [Sursa 21]",
-      "choices": ["Circumstanțial de loc","Complement prepozițional","Atribut adverbial","Nume predicativ"],
+      "question": "Cuvântul subliniat în „Se vor baza mereu pe noi, deoarece le vrem **binele**” are funcția sintactică de: [Sursa 29]",
+      "choices": [
+        "Complement prepozițional",
+        "Complement direct",
+        "Circumstanțial de mod",
+        "Subiect"
+      ],
+      "answerIndex": 1,
+      "explanation": "Cuvântul „binele” (substantivizat prin conversiune) răspunde la întrebarea „ce (vrem)?” pusă verbului tranzitiv, îndeplinind funcția de complement direct."
+    },
+    {
+      "question": "Care serie conține DOAR substantive articulate hotărât? [Sursa 30]",
+      "choices": [
+        "munților, farfurie, documentului, marcă",
+        "vagonul, mașinii, fetei, scară",
+        "gândurile, turmele, copiuța, negura",
+        "izvorului, albine, miere, florile"
+      ],
       "answerIndex": 2,
-      "explanation": "Adverbul de loc însoțit de prepoziție („de acolo”) determină un substantiv („mașina”), îndeplinind funcția de atribut adverbial."
+      "explanation": "Varianta corectă conține doar substantive articulate enclitic (la final): gânduri-le, turme-le, copiuț-a, negur-a. Celelalte variante conțin cuvinte nearticulate (scară, albine)."
     },
     {
-      "question": "Seria care conține DOAR substantive defective de singular este: [Sursa 20]",
-      "choices": ["aur, argint, fotbal","pantaloni, ițari, vacanțe","icre, modalități, bachet","ochelari, spaghete, tăiței"],
-      "answerIndex": 3,
-      "explanation": "Aceste cuvinte se utilizează exclusiv cu formă de plural (ex: nu spunem „un ochelar” sau „o spaghetă” în mod curent literar)."
+      "question": "Pronumele relativ îndeplinește funcția sintactică de nume predicativ în cazul acuzativ în: [Sursa 21]",
+      "choices": [
+        "Nu știu pentru cine sunt florile de pe masa din sufragerie.",
+        "Am aflat cine este vecinul nostru nou.",
+        "Copilul pe care îl vezi este un elev istet.",
+        "Filmul despre care am discutat a fost plin de suspans."
+      ],
+      "answerIndex": 0,
+      "explanation": "În subordonata „pentru cine sunt florile”, pronumele relativ „cine” are prepoziția de acuzativ „pentru” și formează predicatul nominal împreună cu verbul copulativ „sunt”."
     },
     {
-      "question": "Seria care conține DOAR prepoziții specifice cazului Dativ este: [Sursa 20/43]",
-      "choices": ["înaintea, înapoia, în fața","în jurul, dinspre, printre","contra, dedesubtul, în spatele","mulțumită, grație, datorită"],
-      "answerIndex": 3,
-      "explanation": "Prepozițiile „grație” (provenită din substantiv) și „mulțumită”, „datorită” (provenite din participii) se construiesc obligatoriu cu cazul Dativ."
-    },
-    {
-      "question": "Alegeți enunțul scris corect conform normelor ortografice: [Sursa 18]",
-      "choices": ["Membri echipii sunt respectuoși.","Membrii echipei sunt respectuoși.","Membri echipei sunt respectuoși.","Membrii echipei sunt respectosi."],
+      "question": "Titlul unei opere literare are rolul de a: [Sursa 24]",
+      "choices": [
+        "Nu avea nicio legătură vizibilă cu textul",
+        "Anticipa tema sau ideea principală a textului",
+        "Fi obligatoriu o metaforă complicată",
+        "Conține exclusiv numele personajelor"
+      ],
       "answerIndex": 1,
-      "explanation": "Substantivul masculin „membru” la plural articulat se scrie cu doi „i” (membrii), iar forma corectă de genitiv pentru „echipă” este „echipei”."
+      "explanation": "Titlul ghidează lectura și reprezintă o cheie de interpretare fundamentală, anticipând tema, mesajul sau reperele esențiale ale operei."
     },
     {
-      "question": "În care dintre următoarele variante verbul „a fi” este VERB AUXILIAR? [Sursa 18]",
-      "choices": ["Blana pisicii este moale.","Pisica este pufoasă.","Pisica a fost la noi.","Pisica este mângâiată de Matei."],
+      "question": "Toate cuvintele din seria „înfrumuseța, frumusețe, frumușel, înfrumusețare” formează: [Sursa 25]",
+      "choices": [
+        "O familie lexicală",
+        "Un câmp lexical",
+        "O serie de neologisme",
+        "Un grup de cuvinte compuse"
+      ],
+      "answerIndex": 0,
+      "explanation": "Cuvintele sunt înrudite ca sens și sunt formate de la aceeași rădăcină (frumos/frumuș-) prin derivare (mijloc intern de îmbogățire a vocabularului), formând o familie lexicală."
+    },
+    {
+      "question": "Subiectul se exprimă printr-o formă verbală nepersonală în varianta: [Sursa 20]",
+      "choices": [
+        "Aud lătrând în depărtare.",
+        "Nu este greu de citit acea carte.",
+        "Se gândea a se plimba mai mult.",
+        "S-a săturat de măturat curtea."
+      ],
+      "answerIndex": 1,
+      "explanation": "În construcția impersonală „Nu este greu de citit”, verbul la supin „de citit” îndeplinește funcția de subiect (Ce nu este greu? -> faptul de a citi)."
+    },
+    {
+      "question": "Există un substantiv în cazul vocativ în enunțul: [Sursa 59]",
+      "choices": [
+        "Ce frumoasă e rochia fetei!",
+        "Ana vine aici cu prietenii.",
+        "Nu fii obraznic!",
+        "Ioane, stai în bancă!"
+      ],
       "answerIndex": 3,
-      "explanation": "În construcția pasivă „este mângâiată”, verbul „a fi” își pierde sensul propriu și ajută doar la conjugarea verbului de bază, fiind auxiliar."
+      "explanation": "Substantivul „Ioane” exprimă o strigare, o adresare directă pentru a atrage atenția, și este izolat prin virgulă, o trăsătură gramaticală și de punctuație specifică Vocativului."
     },
     {
-      "question": "Rolul incipitului într-un text narativ este de a: [Sursa 23]",
-      "choices": ["Prezenta deznodământul.","Formula mesajul moral.","Caracteriza personajul principal.","Introduce cititorul în universul operei."],
-      "answerIndex": 3,
-      "explanation": "Incipitul are funcția de a fixa reperele spațio-temporale și de a face trecerea din lumea reală în lumea ficțională a textului."
+      "question": "Funcția sintactică a pronumelui subliniat în propoziția „Discuția **cu acela** m-a ajutat mult.” este: [Sursa 28]",
+      "choices": [
+        "Atribut pronominal prepozițional",
+        "Circumstanțial de cauză",
+        "Complement prepozițional",
+        "Complement indirect"
+      ],
+      "answerIndex": 0,
+      "explanation": "Pronumele demonstrativ „acela”, precedat de prepoziția „cu”, determină substantivul „Discuția” (Care discuție?), îndeplinind funcția de atribut pronominal prepozițional."
     },
     {
-      "question": "Care dintre următoarele romane este asociat cu valoarea culturală „prietenia și aventura” în materialele studiate? [Sursa 34]",
-      "choices": ["„Mesagerul” de Lois Lowry","„Fahrenheit 451” de Ray Bradbury","„Bătrânul și marea” de Ernest Hemingway","„Inocenții” de Ioana Pârvulescu"],
-      "answerIndex": 3,
-      "explanation": "Tabelul cu valori literare asociază clar operele „Platanos”, „Micul Prinț” și „Inocenții” cu prietenia și aventura."
+      "question": "Seria care conține doar verbe la timpul imperfect este: [Sursa 51]",
+      "choices": [
+        "aduceam, studiai, se uitau, dădeam",
+        "vuiau, stăteai, veniră, citiseră",
+        "făceați, mergeți, scrieți, se pricep",
+        "soseai, miroseau, clocoteau, prinzi"
+      ],
+      "answerIndex": 0,
+      "explanation": "Verbele din seria A exprimă acțiuni trecute, în desfășurare, nefinalizate, caracterizate de prezența sufixelor specifice imperfectului (-a-, -ea-)."
     },
     {
-      "question": "Forma corectă de Genitiv-Dativ a substantivului „piață” este: [Sursa 31]",
-      "choices": ["Pieții","Piaței","Pieței","Pieților"],
+      "question": "Există un predicat verbal în enunțul: [Sursa 28]",
+      "choices": [
+        "Copiii au rămas la fel de frumoși.",
+        "Cartea va fi semnată de profesor.",
+        "Mara a ajuns profesoară de matematică.",
+        "Limba noastră-i o comoară."
+      ],
+      "answerIndex": 1,
+      "explanation": "„Va fi semnată” este un predicat verbal exprimat prin verb la diateza pasivă (auxiliarul „a fi” + participiu). Celelalte variante conțin verbe copulative (au rămas, a ajuns, -i) care formează predicate nominale."
+    },
+    {
+      "question": "Gradul de comparație al adjectivului din propoziția „Ana este **nespus de frumoasă**.” este: [Sursa 21]",
+      "choices": [
+        "Superlativ absolut de superioritate",
+        "Pozitiv",
+        "Comparativ de egalitate",
+        "Comparativ de superioritate"
+      ],
+      "answerIndex": 0,
+      "explanation": "Structura „nespus de” este o locuțiune adverbială care funcționează ca marcă de intensificare maximă a însușirii, specifică superlativului absolut."
+    },
+    {
+      "question": "Câte atribute sunt în versul „El depune flori de iarnă pe cristalul înghețat...” (V. Alecsandri)? [Sursa 25]",
+      "choices": [
+        "Patru atribute",
+        "Trei atribute",
+        "Două atribute",
+        "Un atribut"
+      ],
       "answerIndex": 2,
-      "explanation": "Conform tabelului ortografic, forma articulată corectă la genitiv-dativ singular este „pieței”."
+      "explanation": "În vers există două atribute: „de iarnă” (atribut substantival care determină „flori”) și „înghețat” (atribut adjectival care determină „cristalul”)."
     },
     {
-      "question": "În propoziția „Aproapele meu îți vrea binele”, cuvintele subliniate („Aproapele”, „binele”) s-au format, în ordine, prin: [Sursa 24]",
-      "choices": ["derivare, derivare","conversiune, derivare","conversiune, conversiune","compunere, conversiune"],
+      "question": "Câte subiecte neexprimate există în fraza: „După ce au terminat temele, au ieșit și s-au jucat.”? [Sursa 53]",
+      "choices": [
+        "Trei subiecte",
+        "Două subiecte",
+        "Un subiect",
+        "Niciun subiect"
+      ],
+      "answerIndex": 0,
+      "explanation": "Fraza are trei predicate verbale (au terminat, au ieșit, s-au jucat). Subiectul „ei/ele” este neexprimat (subînțeles) pentru fiecare propoziție în parte, rezultând trei subiecte subînțelese."
+    },
+    {
+      "question": "Seria care conține doar cuvinte despărțite corect în silabe este: [Sursa 29]",
+      "choices": [
+        "ge-o-gra-fi-e, at-las, a-xi-o-mă, cau-ca-zi-an",
+        "ve-ghe-ri-le, mi-ngea, ghe-mo-toc, fa-zan",
+        "ca-mi-o-ne-tă, im-pre-si-o-nea-ză, mi-nion, trau-mă",
+        "ma-chia-juri, des-pre, coo-pe-ra-re, po-e-zie"
+      ],
       "answerIndex": 2,
-      "explanation": "Ambele cuvinte provin din adverbe („aproape” și „bine”) care, prin atașarea articolului hotărât („-le”), s-au transformat în substantive (conversiune)."
+      "explanation": "Despărțirile respectă riguros regulile, izolând hiatul (ex. -si-o-) și menținând diftongii în aceeași silabă (-nea-, -nion, trau-)."
     },
     {
-      "question": "Propoziția subordonată din fraza „Am dat de veste că vom aduce toate cadourile” este: [Sursa 87]",
-      "choices": ["Atributivă","Completivă directă","Subiectivă","Circumstanțială de mod"],
+      "question": "Cuvântul „lumină” este folosit cu sens figurat în varianta: [Sursa 45]",
+      "choices": [
+        "Lumina soarelui încălzea pământul.",
+        "A aprins lumina în cameră pentru a citi.",
+        "O rază de lumină i-a apărut în suflet.",
+        "Lumina lămpii din colț era destul de slabă."
+      ],
+      "answerIndex": 2,
+      "explanation": "Sensul figurat este un sens nou, neobișnuit, obținut printr-un proces metaforic. Aici, lumina din suflet nu este o sursă fizică, ci simbolizează speranța sau bucuria."
+    },
+    {
+      "question": "Alege varianta în care există un raport de coordonare prin joncțiune: [Sursa 27]",
+      "choices": [
+        "Chiar dacă nu vei veni la noi, nu vom fi supărați.",
+        "A citit cartea pe care i-ai recomandat-o aseară.",
+        "Oare vrea pere sau își dorește mere?",
+        "În timp ce citeam, am auzit un zgomot ciudat."
+      ],
+      "answerIndex": 2,
+      "explanation": "Fraza din varianta C este alcătuită din două propoziții principale legate prin conjuncția coordonatoare disjunctivă „sau”, realizându-se astfel o joncțiune."
+    },
+    {
+      "question": "În textul liric, „vocea lirică” (sau eul liric) este: [Sursa 190]",
+      "choices": [
+        "Vocea reală și biografică a autorului care scrie poezia",
+        "O construcție ficțională care susține discursul poetic",
+        "O persoană obiectivă care povestește evenimente",
+        "Personajul care interacționează în indicațiile scenice"
+      ],
       "answerIndex": 1,
-      "explanation": "Locuțiunea verbală „a da de veste” se traduce prin „a vesti”. Întrebarea „ce am vestit?” primește răspunsul de la propoziția subordonată completivă directă."
+      "explanation": "Fișa teoretică atrage atenția că vocea lirică nu trebuie confundată cu autorul real; este o ipostază imaginară (ficțională) prin care sunt transmise sentimentele în poezie."
     },
     {
-      "question": "Seria care conține DOAR conjuncții subordonatoare este: [Sursa 26]",
-      "choices": ["ca să, ca...să, fiindcă, ori","deci, așadar, sau, chiar dacă","și, prin urmare, în timp ce, de vreme ce","să, că, dacă, deși"],
-      "answerIndex": 3,
-      "explanation": "„Să”, „că”, „dacă”, „deși” introduc exclusiv propoziții subordonate, neavând rol de coordonare."
-    },
-    {
-      "question": "Tiparul narativ se caracterizează prin: [Sursa 24]",
-      "choices": ["Exprimarea directă a sentimentelor","Prezența naratorului și a personajelor","Structura exclusiv în versuri","Utilizarea exclusivă a dialogului"],
+      "question": "Poezia „Lecția de citire” de Nichita Stănescu se caracterizează prin: [Sursa 188]",
+      "choices": [
+        "Respectarea strictă a normelor rigide de versificație clasică",
+        "Renunțarea la regulile tradiționale de prozodie și folosirea limbajului neobișnuit",
+        "Prezentarea exclusivă a unor peisaje din natură",
+        "Lipsa totală a oricărui sentiment sau viziuni subiective"
+      ],
       "answerIndex": 1,
-      "explanation": "Textul narativ (epic) se bazează pe relatarea unor întâmplări de către o voce auctorială (naratorul), cu participarea personajelor."
-    },
-    {
-      "question": "Seria care conține DOAR adverbe este: [Sursa 26]",
-      "choices": ["aici, acolo, spre, dinspre","altcineva, către, acasă, cândva","orișicând, mereu, prin, la","bineînțeles, posibil, oricând, altundeva"],
-      "answerIndex": 3,
-      "explanation": "Seria indicată conține numai adverbe, în timp ce restul seriilor amestecă adverbe cu prepoziții (spre, dinspre, la, prin)."
-    },
-    {
-      "question": "În propoziția „Tudor are doar optsprezece ani”, folosirea cuvântului evidențiat este corectă deoarece: [Sursa 100]",
-      "choices": ["Nu are funcție sintactică și stă lângă un numeral.","„Doar/numai” se utilizează în construcții afirmative, pe când „decât” cere negație.","Înlocuiește conjuncția „ci”.","Este un adjectiv invariabil."],
-      "answerIndex": 1,
-      "explanation": "Norma literară a limbii române impune folosirea semiadverbelor „doar” sau „numai” pentru limitarea cantitativă în propoziții afirmative."
-    },
-    {
-      "question": "Există un atribut verbal în varianta: [Sursa 26]",
-      "choices": ["Mi-a spus mama că acel volum de poezii este de citit.","Nu am găsit caietul de colorat.","Avem de citit acea carte până joi.","Dorința Anei era de a termina cartea."],
-      "answerIndex": 1,
-      "explanation": "Verbul la supin „de colorat” determină substantivul „caietul” (care caiet?), având funcția de atribut verbal."
-    },
-    {
-      "question": "Substantivul „pădure” se află în cazul genitiv în enunțul: [Sursa 57]",
-      "choices": ["Pădurii îi lipsesc copacii.","Pădurea se întinde pe o suprafață mare.","Îi mulțumesc pădurii pentru aerul curat.","Animalele pădurii sunt sălbatice."],
-      "answerIndex": 3,
-      "explanation": "În expresia „Animalele pădurii”, cuvântul răspunde la întrebarea „ale cui (animale)?”, marcând posesia specifică genitivului."
-    },
-    {
-      "question": "Seria care conține doar verbe scrise corect la modul imperativ, forma negativă, este: [Sursa 49]",
-      "choices": ["Nu creea!, nu agreea!, nu citii!","Nu aduce!, nu spune!, nu ține!","Nu zidi!, nu ieșii!, nu ne plictisi!","Nu duce!, nu zice!, nu face!, nu tăcea!"],
-      "answerIndex": 3,
-      "explanation": "La formarea imperativului negativ, persoana a II-a singular, se folosește negația urmată de verbul la infinitiv (a duce -> nu duce!)."
-    },
-    {
-      "question": "În versul „Râul luciu se-nconvoaie sub copaci ca un balaur” (V. Alecsandri), măsura este de: [Sursa 61]",
-      "choices": ["15 silabe","17 silabe","18 silabe","16 silabe"],
-      "answerIndex": 3,
-      "explanation": "Analizând fonetic versul și unind cuvintele legate prin cratimă (se-n-con-voa-ie), se numără 16 silabe."
-    },
-    {
-      "question": "Subiectul se exprimă printr-un pronume personal de persoana a II-a, numărul plural, în varianta: [Sursa 53]",
-      "choices": ["Voi, stați liniștiți!","Pe voi vă cheamă bunica la masă?","La voi nu mai venim niciodată.","Nu știu când ați scris voi pe grupul clasei."],
-      "answerIndex": 3,
-      "explanation": "În ultima variantă, pronumele „voi” răspunde la întrebarea „cine (ați scris)?”, având astfel funcția de subiect."
+      "explanation": "Fișa clasează opera ca aparținând Modernismului târziu (secolul XX), mișcare ce se distinge prin renunțarea la rigorile clasice și prin originalitatea exprimării literare."
     }
   ];
 
@@ -205,13 +334,16 @@
   const timerBadge = document.getElementById("timerBadge");
   const progressWrap = document.getElementById("progressWrap");
 
-  // === CERINȚĂ QUIZZ ROMÂNĂ: 2 minute / întrebare ===
-  // (aceleași cerințe ca paginile anterioare de română)
-  const TIME_PER_Q = 2 * 60; // sec
+  // CERINȚE pentru quiz de română:
+  // - 30 sec / întrebare
+  // - dacă există link de referință de tip "Link text: https://..." -> timp infinit
+  const DEFAULT_TIME_PER_Q = 30;
+  const INFINITE = null;
+
   let idx = 0;
   let score = 0;
   let timer = null;
-  let remaining = TIME_PER_Q;
+  let remaining = DEFAULT_TIME_PER_Q;
   let locked = false;
 
   function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
@@ -219,7 +351,7 @@
   function grade1to10(correct, total) {
     if (total <= 0) return 1;
     const ratio = correct / total;
-    const g = 1 + ratio * 9; // 0% -> 1, 100% -> 10
+    const g = 1 + ratio * 9;
     return Math.round(g * 100) / 100;
   }
 
@@ -236,8 +368,23 @@
       .replace(/'/g, "&#039;");
   }
 
+  // Cerințe formatare română:
+  // - **...** => bold + underline
+  // - (Link text: URL) => link clickabil + spațiu înainte de ")"
   function formatText(raw) {
-    return escapeHtml(raw);
+    let text = escapeHtml(raw);
+
+    text = text.replace(/\(Link text:\s*(https?:\/\/[^\s)]+)\s*\)/g, (m, url) => {
+      return `(Link text: <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a> )`;
+    });
+
+    text = text.replace(/\*\*(.+?)\*\*/g, '<span class="emph">$1</span>');
+
+    return text;
+  }
+
+  function hasReferenceLink(questionText) {
+    return /(Link text:)/i.test(questionText) || /(https?:\/\/)/i.test(questionText);
   }
 
   function fmtTime(seconds){
@@ -246,10 +393,17 @@
     return String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
   }
 
-  function startTimer(){
+  function startTimer(secondsOrNull){
     stopTimer();
-    remaining = TIME_PER_Q;
 
+    if (secondsOrNull === INFINITE) {
+      progressWrap.style.display = "none";
+      timerBadge.innerHTML = `⏳ Timp rămas: <span id="timeLeft">∞</span>`;
+      return;
+    }
+
+    const seconds = secondsOrNull;
+    remaining = seconds;
     progressWrap.style.display = "block";
     timerBadge.innerHTML = `⏳ Timp rămas: <span id="timeLeft">${fmtTime(remaining)}</span>`;
     timeBar.style.width = "100%";
@@ -259,7 +413,7 @@
       const tl = document.getElementById("timeLeft");
       if (tl) tl.textContent = fmtTime(Math.max(remaining, 0));
 
-      const pct = (remaining / TIME_PER_Q) * 100;
+      const pct = (remaining / seconds) * 100;
       timeBar.style.width = clamp(pct, 0, 100) + "%";
 
       if (remaining <= 0) {
@@ -273,6 +427,8 @@
     locked = false;
     const q = questions[idx];
     qCounter.textContent = `Întrebarea ${idx + 1} / ${questions.length}`;
+
+    const timeForThis = hasReferenceLink(q.question) ? INFINITE : DEFAULT_TIME_PER_Q;
 
     app.innerHTML = `
       <h2>${formatText(q.question)}</h2>
@@ -291,7 +447,7 @@
       <div id="feedback"></div>
       <div class="footer small muted">
         <div>Scor curent: <b id="scoreNow">${score}</b> / ${questions.length}</div>
-        <div>Timp / întrebare: <code>${fmtTime(TIME_PER_Q)}</code></div>
+        <div>Timp / întrebare: <code>${timeForThis === INFINITE ? "∞" : fmtTime(timeForThis)}</code></div>
       </div>
     `;
 
@@ -310,7 +466,7 @@
       revealAnswer(null, false);
     };
 
-    startTimer();
+    startTimer(timeForThis);
   }
 
   function revealAnswer(selectedIndex, timedOut){
